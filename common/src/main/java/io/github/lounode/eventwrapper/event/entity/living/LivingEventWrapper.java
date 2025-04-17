@@ -1,0 +1,143 @@
+package io.github.lounode.eventwrapper.event.entity.living;
+
+
+import io.github.lounode.eventwrapper.event.entity.EntityEventWrapper;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.Nullable;
+
+
+/**
+ * LivingEvent is fired whenever an event involving a {@link LivingEntity} occurs.<br>
+ * If a method utilizes this {@link Event} as its parameter, the method will
+ * receive every child event of this class.<br>
+ * <br>
+ * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ **/
+public abstract class LivingEventWrapper extends EntityEventWrapper {
+
+    private final LivingEntity livingEntity;
+
+    public LivingEventWrapper(LivingEntity entity) {
+        super(entity);
+        this.livingEntity = entity;
+    }
+
+    public LivingEventWrapper(LivingEvent event) {
+        this(event.getEntity());
+    }
+
+    public LivingEntity getEntity() {
+        return this.livingEntity;
+    }
+
+    public static Class<? extends Event> getForgeClass() {
+        return LivingEvent.class;
+    }
+
+    /**
+     * LivingUpdateEvent is fired when a LivingEntity is ticked in {@link LivingEntity#tick()}. <br>
+     * <br>
+     * This event is fired via the {@link ForgeHooks#onLivingTick(LivingEntity)}.<br>
+     * <br>
+     * This event is {@link Cancelable}.<br>
+     * If this event is canceled, the Entity does not update.<br>
+     * <br>
+     * This event does not have a result. {@link HasResult}<br>
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     **/
+    @Cancelable
+    public static class LivingTickEvent extends LivingEvent {
+        public LivingTickEvent(LivingEntity e) {
+            super(e);
+        }
+
+        public LivingTickEvent(LivingTickEvent event) {
+            this(event.getEntity());
+        }
+
+        public static Class<? extends Event> getForgeClass() {
+            return LivingTickEvent.class;
+        }
+    }
+
+
+    /**
+     * LivingJumpEvent is fired when an Entity jumps.<br>
+     * This event is fired whenever an Entity jumps in
+     * {@code LivingEntity#jumpFromGround()}, {@code MagmaCube#jumpFromGround()},
+     * and {@code Horse#jumpFromGround()}.<br>
+     * <br>
+     * This event is fired via the {@link ForgeHooks#onLivingJump(LivingEntity)}.<br>
+     * <br>
+     * This event is not {@link Cancelable}.<br>
+     * <br>
+     * This event does not have a result. {@link HasResult}<br>
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     **/
+    public static class LivingJumpEvent extends LivingEvent {
+        public LivingJumpEvent(LivingEntity e) {
+            super(e);
+        }
+
+        public LivingJumpEvent(LivingJumpEvent event) {
+            this(event.getEntity());
+        }
+
+        public static Class<? extends Event> getForgeClass() {
+            return LivingJumpEvent.class;
+        }
+    }
+
+    public static class LivingVisibilityEvent extends LivingEvent {
+        private double visibilityModifier;
+        private final @Nullable Entity lookingEntity;
+
+        public LivingVisibilityEvent(LivingEntity livingEntity, @Nullable Entity lookingEntity, double originalMultiplier) {
+            super(livingEntity);
+            this.visibilityModifier = originalMultiplier;
+            this.lookingEntity = lookingEntity;
+        }
+
+        public LivingVisibilityEvent(LivingVisibilityEvent event) {
+            this(event.getEntity(), event.getLookingEntity(), event.getVisibilityModifier());
+        }
+
+        /**
+         * @param mod Is multiplied with the current modifier
+         */
+        public void modifyVisibility(double mod)
+        {
+            visibilityModifier *= mod;
+        }
+
+        /**
+         * @return The current modifier
+         */
+        public double getVisibilityModifier()
+        {
+            return visibilityModifier;
+        }
+
+        /**
+         * @return The entity trying to see this LivingEntity, if available
+         */
+        @Nullable
+        public Entity getLookingEntity()
+        {
+            return lookingEntity;
+        }
+
+        public static Class<? extends Event> getForgeClass() {
+            return LivingVisibilityEvent.class;
+        }
+    }
+}

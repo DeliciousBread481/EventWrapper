@@ -1,0 +1,216 @@
+plugins {
+    id 'fabric-loom' version '1.10-SNAPSHOT'
+    id 'maven-publish'
+}
+
+archivesBaseName =  mod_id + "-" + archivesBaseName
+version = "${minecraft_version}-${mod_version}"
+if (System.getenv().RELEASE_MODE != "1") {
+    version += '-SNAPSHOT'
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/eventwrapper.accesswidener")
+    mixin.defaultRefmapName = "eventwrapper.refmap.json"
+
+
+    runs {
+        client{
+            programArgs(["--username", "Dev", "--uuid", "4f201c25-b473-4c2c-959a-dea681f79c23"])
+            vmArg "-DdebugEvent=true"
+        }
+        /*
+        gameTest {
+            server()
+            vmArg "-Dfabric-api.gametest=1"
+        }
+
+
+        commonDatagen {
+            client()
+            vmArg "-Deventwrapper.common_datagen=1"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.modid=eventwrapper"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("../common/src/generated/resources")}"
+        }
+
+        fabricDatagen {
+            client()
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.modid=eventwrapper"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
+        }
+        */
+        configureEach {
+            runDir "../run"
+            ideConfigGenerated(true)
+            vmArg "-XX:+AllowEnhancedClassRedefinition"
+        }
+    }
+
+    mods {
+        eventwrapper {
+            sourceSet(sourceSets.main)
+            sourceSet project(":common").sourceSets.main
+        }
+    }
+}
+
+
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        name = "Modmuss"
+        url = "https://maven.modmuss50.me/"
+    }
+    maven {
+        name = "Jared"
+        url = "https://maven.blamejared.com/" // for JEI and Patchouli
+    }
+    maven {
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/" // for trinkets and emi
+    }
+    maven {
+        name = "Ladysnake Libs"
+        url = 'https://maven.ladysnake.org/releases'
+    }
+    maven {
+        name = "BuildCraft" // for LBA
+        url = "https://mod-buildcraft.com/maven"
+    }
+    maven {
+        name "entity reach"
+        url "https://maven.jamieswhiteshirt.com/libs-release/"
+    }
+    maven {
+        url "https://jitpack.io" // for step height eam
+    }
+    maven {
+        url "https://maven.shedaniel.me/" // for rei
+    }
+    maven {
+        name = "ParchmentMC"
+        url = "https://maven.parchmentmc.net/"
+    }
+    maven {
+        name = "Unascribed"
+        url "https://repo.unascribed.com" // for ears
+        content {
+            includeGroup "com.unascribed"
+        }
+    }
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven" // for "here be no dragons"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
+    maven {
+        name = "Forge"
+        url = "https://maven.minecraftforge.net"
+    }
+
+
+}
+
+dependencies {
+    implementation project(":common")
+
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.20.1:2023.09.03@zip")
+    }
+
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+
+    modRuntimeOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+    modImplementation "com.terraformersmc:modmenu:7.2.2"
+
+    //Libs
+    //modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.2.1"
+    //modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.2.1"
+
+    compileOnly "com.demonwav.mcdev:annotations:1.0" // only to shut up compile warnings from CCA's usage of CheckEnv and Env
+    compileOnly "net.minecraftforge:forge:${minecraft_version}-${forge_version}:universal"
+    compileOnly "net.minecraftforge:eventbus:6.0.3"
+
+    testImplementation "net.fabricmc:fabric-loader-junit:${fabric_loader_version}"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+compileJava {
+    source(project(":common").sourceSets.main.allSource)
+    options.compilerArgs << "-Xlint:all,-classfile,-processing,-deprecation,-serial"
+
+}
+
+sourcesJar {
+    from project(":common").sourceSets.main.allJava
+}
+
+processResources {
+    from project(":common").sourceSets.main.resources
+    inputs.property "version", project.version
+
+    // Exclude datagenerator .cache directory
+    exclude '.cache'
+}
+
+def generateModMetadataFabric = tasks.register('generateModMetadataFabric', ProcessResources) {
+    var replaceProperties = [
+            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+            fabric_loader_version: fabric_loader_version,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors: mod_authors, mod_description: mod_description, mod_logo: mod_logo,
+            jei_version: jei_version, jei_version_range: jei_version_range,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+
+
+    from "src/main/template"
+    into "build/generated/sources/modMetaData"
+}
+
+sourceSets.main.resources.srcDir generateModMetadataFabric
+
+afterEvaluate {
+    tasks.named('ideaSyncTask').configure {
+        dependsOn 'generateModMetadataFabric'
+    }
+}
+
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId mod_group_id
+            artifactId project.archivesBaseName
+            version project.version
+            from components.java
+
+            //println "将发布到: ${groupId}:${artifactId}:${version}"
+            //println "本地仓库路径: ${System.properties['user.home']}/.m2/repository"
+        }
+    }
+
+    repositories {
+        if (System.getenv("GITHUB_ACTIONS") != null) {
+
+        } else {
+            mavenLocal()
+        }
+    }
+}

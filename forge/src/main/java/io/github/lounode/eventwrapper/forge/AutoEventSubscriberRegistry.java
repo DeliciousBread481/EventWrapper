@@ -1,0 +1,56 @@
+package io.github.lounode.eventwrapper.forge;
+
+import io.github.lounode.eventwrapper.EventsWrapper;
+import io.github.lounode.eventwrapper.eventbus.api.EventBusSubscriberWrapper;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.forgespi.language.ModFileScanData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.objectweb.asm.Type;
+import net.minecraftforge.fml.Logging;
+
+import java.util.stream.Collectors;
+
+public class AutoEventSubscriberRegistry {
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Type AUTO_SUBSCRIBER = Type.getType(EventBusSubscriberWrapper.class);
+    private static final Type MOD_TYPE = Type.getType(Mod.class);
+
+    public static void inject(ModFileScanData scanData) {
+        if (scanData == null) return;
+        //LOGGER.debug(Logging.LOADING, "Attempting to inject @EventBusSubscriber classes into the eventbus for {}", mod.getModId());
+
+        var targets = scanData.getAnnotations().stream()
+                .filter(data -> AUTO_SUBSCRIBER.equals(data.annotationType()))
+                .toList();
+
+        var modids = scanData.getAnnotations().stream()
+                .filter(data -> MOD_TYPE.equals(data.annotationType()))
+                .collect(Collectors.toMap(a -> a.clazz().getClassName(), a -> (String)a.annotationData().get("value")));
+
+
+        for (var data : targets) {
+            //var modId = modids.getOrDefault(data.clazz().getClassName(), mod.getModId());
+            //modId = value(data, "modid", modId);
+
+
+
+            //if (Objects.equals(mod.getModId(), modId)) {
+
+                LOGGER.debug(Logging.LOADING, "Auto-subscribing {}", data.clazz().getClassName());
+                try {
+                    EventsWrapper.register(Class.forName(data.clazz().getClassName()));
+                } catch (ClassNotFoundException e) {
+
+                }
+
+
+            //}
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <R> R value(ModFileScanData.AnnotationData data, String key, R value) {
+        return (R)data.annotationData().getOrDefault(key, value);
+    }
+}
