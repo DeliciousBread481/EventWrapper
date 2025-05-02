@@ -32,6 +32,7 @@ public abstract class LivingEventWrapper extends EntityEventWrapper {
         this(event.getEntity());
     }
 
+    @Override
     public LivingEntity getEntity() {
         return this.livingEntity;
     }
