@@ -6,12 +6,9 @@ plugins {
 
 archivesBaseName =  mod_id + "-" + archivesBaseName
 version = "${minecraft_version}-${mod_version}"
-/*
 if (System.getenv().RELEASE_MODE == null) {
     version += '-SNAPSHOT'
 }
-
- */
 
 legacyForge {
     version = minecraft_version + "-" + forge_version
