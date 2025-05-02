@@ -36,7 +36,7 @@ jobs:
           VERSION=$(awk -F '=' '/^mod_version=/ { print $2; }' gradle.properties)
           
           echo "forge=forge/build/libs/eventwrapper-forge-${MC}-${VERSION}${SNAPSHOT_SUFFIX}.jar" >> "$GITHUB_OUTPUT"
-          echo "fabric=Fabric/build/libs/eventwrapper-fabric-${MC}-${VERSION}${SNAPSHOT_SUFFIX}.jar" >> "$GITHUB_OUTPUT"
+          echo "fabric=fabric/build/libs/eventwrapper-fabric-${MC}-${VERSION}${SNAPSHOT_SUFFIX}.jar" >> "$GITHUB_OUTPUT"
 
       - name: Build with Gradle
         run: |
