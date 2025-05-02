@@ -6,7 +6,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -54,17 +53,17 @@ public abstract class LivingEventWrapper extends EntityEventWrapper {
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
     @Cancelable
-    public static class LivingTickEvent extends LivingEvent {
+    public static class LivingTickEvent extends LivingEventWrapper {
         public LivingTickEvent(LivingEntity e) {
             super(e);
         }
 
-        public LivingTickEvent(LivingTickEvent event) {
+        public LivingTickEvent(LivingEvent.LivingTickEvent event) {
             this(event.getEntity());
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return LivingTickEvent.class;
+            return LivingEvent.LivingTickEvent.class;
         }
     }
 
@@ -83,21 +82,21 @@ public abstract class LivingEventWrapper extends EntityEventWrapper {
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class LivingJumpEvent extends LivingEvent {
+    public static class LivingJumpEvent extends LivingEventWrapper {
         public LivingJumpEvent(LivingEntity e) {
             super(e);
         }
 
-        public LivingJumpEvent(LivingJumpEvent event) {
+        public LivingJumpEvent(LivingEvent.LivingJumpEvent event) {
             this(event.getEntity());
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return LivingJumpEvent.class;
+            return LivingEvent.LivingJumpEvent.class;
         }
     }
 
-    public static class LivingVisibilityEvent extends LivingEvent {
+    public static class LivingVisibilityEvent extends LivingEventWrapper {
         private double visibilityModifier;
         private final @Nullable Entity lookingEntity;
 
@@ -107,7 +106,7 @@ public abstract class LivingEventWrapper extends EntityEventWrapper {
             this.lookingEntity = lookingEntity;
         }
 
-        public LivingVisibilityEvent(LivingVisibilityEvent event) {
+        public LivingVisibilityEvent(LivingEvent.LivingVisibilityEvent event) {
             this(event.getEntity(), event.getLookingEntity(), event.getVisibilityModifier());
         }
 
@@ -137,7 +136,7 @@ public abstract class LivingEventWrapper extends EntityEventWrapper {
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return LivingVisibilityEvent.class;
+            return LivingEvent.LivingVisibilityEvent.class;
         }
     }
 }

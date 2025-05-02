@@ -1,10 +1,10 @@
 package io.github.lounode.eventwrapper.event.entity.living;
 
+import io.github.lounode.eventwrapper.eventbus.api.Cancelable;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -15,7 +15,7 @@ import net.minecraftforge.eventbus.api.Event;
  * <br>
  * {@link #amount} contains the amount of healing done to the Entity that was healed. <br>
  * <br>
- * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+ * This event is {@link Cancelable}.<br>
  * If this event is canceled, the Entity is not healed.<br>
  * <br>
  * This event does not have a result. {@link Event.HasResult}<br>

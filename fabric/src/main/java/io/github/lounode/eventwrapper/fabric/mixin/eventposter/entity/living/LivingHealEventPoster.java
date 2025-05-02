@@ -14,6 +14,10 @@ public class LivingHealEventPoster {
         LivingHealEventWrapper event = new LivingHealEventWrapper((LivingEntity) (Object) this, healAmount);
         EventsWrapper.post(event);
 
+        if (event.isCanceled()) {
+            return 0;
+        }
+
         return event.getAmount();
     }
 }

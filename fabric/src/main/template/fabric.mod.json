@@ -19,10 +19,9 @@
     "main": ["io.github.lounode.eventwrapper.fabric.FabricCommonInitializer"],
     "preLaunch": ["io.github.lounode.eventwrapper.fabric.PreLaunchHandler"],
     "fabric-gametest": [
-    
+
     ]
   },
-
   "mixins": [
     "eventwrapper_common.mixins.json",
     "eventwrapper_fabric.mixins.json"

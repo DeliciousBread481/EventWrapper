@@ -6,9 +6,12 @@ plugins {
 
 archivesBaseName =  mod_id + "-" + archivesBaseName
 version = "${minecraft_version}-${mod_version}"
+/*
 if (System.getenv().RELEASE_MODE != "1") {
     version += '-SNAPSHOT'
 }
+
+ */
 
 mixin{
     add sourceSets.main, "eventwrapper.refmap.json"
@@ -44,6 +47,10 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+}
+
+sourceSets.main.java {
+    exclude 'io/github/lounode/eventwrapper/fabric/**'
 }
 
 legacyForge {

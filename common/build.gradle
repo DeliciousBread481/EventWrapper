@@ -6,9 +6,12 @@ plugins {
 
 archivesBaseName =  mod_id + "-" + archivesBaseName
 version = "${minecraft_version}-${mod_version}"
+/*
 if (System.getenv().RELEASE_MODE == null) {
     version += '-SNAPSHOT'
 }
+
+ */
 
 legacyForge {
     version = minecraft_version + "-" + forge_version
@@ -93,6 +96,10 @@ test {
 
 sourceSets.main.resources {
     srcDir 'src/generated/resources'
+}
+
+sourceSets.main.java {
+    exclude 'io/github/lounode/eventwrapper/test/**'
 }
 
 processResources {

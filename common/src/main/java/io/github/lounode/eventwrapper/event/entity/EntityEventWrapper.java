@@ -28,6 +28,15 @@ public abstract class EntityEventWrapper extends EventWrapper {
         return entity;
     }
 
+    public static Class<? extends Event> getForgeClass() {
+        return EntityEvent.class;
+    }
+
+    @Override
+    public Object toForgeEvent() {
+        return new EntityEvent(getEntity());
+    }
+
     /**
      * EntityConstructing is fired when an Entity is being created. <br>
      * This event is fired within the constructor of the Entity.<br>
@@ -38,7 +47,7 @@ public abstract class EntityEventWrapper extends EventWrapper {
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class EntityConstructing extends EntityEvent
+    public static class EntityConstructing extends EntityEventWrapper
     {
         public EntityConstructing(Entity entity)
         {
@@ -51,6 +60,11 @@ public abstract class EntityEventWrapper extends EventWrapper {
 
         public static Class<? extends Event> getForgeClass() {
             return EntityEvent.EntityConstructing.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new EntityEvent.EntityConstructing(getEntity());
         }
     }
 
@@ -66,7 +80,7 @@ public abstract class EntityEventWrapper extends EventWrapper {
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class EnteringSection extends EntityEvent
+    public static class EnteringSection extends EntityEventWrapper
     {
 
         private final long packedOldPos;
@@ -131,9 +145,12 @@ public abstract class EntityEventWrapper extends EventWrapper {
         public static Class<? extends Event> getForgeClass() {
             return EntityEvent.EnteringSection.class;
         }
+
+        @Override
+        public Object toForgeEvent() {
+            return new EntityEvent.EnteringSection(getEntity(), getPackedOldPos(), getPackedNewPos());
+        }
     }
 
-    public static Class<? extends Event> getForgeClass() {
-        return EntityEvent.class;
-    }
+
 }

@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import static io.github.lounode.eventwrapper.forge.ForgeCommonInitializer.MOD_ID;
 
 @Mod(MOD_ID)
-@EventBusSubscriberWrapper
 public class ForgeCommonInitializer {
     public static final String MOD_ID = "eventwrapper";
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -26,24 +25,6 @@ public class ForgeCommonInitializer {
 
         for (var data : scanData) {
             AutoEventSubscriberRegistry.inject(data);
-        }
-    }
-
-
-    @SubscribeEventWrapper
-    public static void onEffect(MobEffectEventWrapper.Applicable event) {
-        if (isDebugVersion()) {
-            //LOGGER.info("Effect added: " + event.getEntity());
-            if (event.getEffectInstance().getEffect().getCategory() == MobEffectCategory.HARMFUL) {
-                event.setResult(EventWrapper.Result.DENY);
-            }
-        }
-    }
-
-    @SubscribeEventWrapper
-    public static void onCooldownStart(ItemCooldownStartEventWrapper event) {
-        if (isDebugVersion()) {
-            event.setCanceled(true);
         }
     }
 

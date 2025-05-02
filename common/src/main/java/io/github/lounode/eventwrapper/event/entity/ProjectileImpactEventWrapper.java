@@ -95,4 +95,9 @@ public class ProjectileImpactEventWrapper extends EntityEventWrapper {
     public static Class<? extends Event> getForgeClass() {
         return ProjectileImpactEvent.class;
     }
+
+    @Override
+    public Object toForgeEvent() {
+        return new ProjectileImpactEvent(getProjectile(), getRayTraceResult());
+    }
 }

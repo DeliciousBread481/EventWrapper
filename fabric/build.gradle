@@ -5,9 +5,12 @@ plugins {
 
 archivesBaseName =  mod_id + "-" + archivesBaseName
 version = "${minecraft_version}-${mod_version}"
+/*
 if (System.getenv().RELEASE_MODE != "1") {
     version += '-SNAPSHOT'
 }
+
+ */
 
 loom {
     accessWidenerPath = file("src/main/resources/eventwrapper.accesswidener")
@@ -19,12 +22,12 @@ loom {
             programArgs(["--username", "Dev", "--uuid", "4f201c25-b473-4c2c-959a-dea681f79c23"])
             vmArg "-DdebugEvent=true"
         }
-        /*
+
         gameTest {
             server()
             vmArg "-Dfabric-api.gametest=1"
         }
-
+        /*
 
         commonDatagen {
             client()
@@ -60,6 +63,10 @@ loom {
 
 sourceSets.main.resources {
     srcDir 'src/generated/resources'
+}
+
+sourceSets.main.java {
+    exclude 'io/github/lounode/eventwrapper/forge/**'
 }
 
 repositories {

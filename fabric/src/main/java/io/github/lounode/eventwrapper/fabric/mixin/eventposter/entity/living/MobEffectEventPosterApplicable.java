@@ -25,7 +25,7 @@ public class MobEffectEventPosterApplicable {
             MobEffectEventWrapper.Applicable event = new MobEffectEventWrapper.Applicable((LivingEntity) (Object) this, effectInstance);
             EventsWrapper.post(event);
 
-            cir.setReturnValue(event.getResult() == EventWrapper.Result.DEFAULT || event.getResult() == EventWrapper.Result.ALLOW);
+            cir.setReturnValue(event.getResult() == EventWrapper.Result.ALLOW);
         }
     }
 }

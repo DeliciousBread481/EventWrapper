@@ -3,7 +3,7 @@ package io.github.lounode.eventwrapper.mixin;
 import io.github.lounode.eventwrapper.EventsWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.ItemCooldownFinishEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.ItemCooldownStartEventWrapper;
-import net.minecraft.client.Minecraft;
+import io.github.lounode.eventwrapper.utils.ClientUtil;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -28,7 +28,7 @@ public class ItemCooldownEventPoster {
         ItemCooldowns self = (ItemCooldowns) (Object) this;
         Player player;
         if (!isServer(self)) {
-            player = Minecraft.getInstance().player;
+            player = ClientUtil.getClientPlayer();
         } else {
             player = getServerPlayerField(self);
         }
@@ -47,7 +47,7 @@ public class ItemCooldownEventPoster {
         ItemCooldowns self = (ItemCooldowns) (Object) this;
         Player player;
         if (!isServer(self)) {
-            player = Minecraft.getInstance().player;
+            player = ClientUtil.getClientPlayer();
         } else {
             player = getServerPlayerField(self);
         }

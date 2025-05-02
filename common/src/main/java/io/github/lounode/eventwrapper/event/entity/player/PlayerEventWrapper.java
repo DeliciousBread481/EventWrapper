@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -53,8 +54,6 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         return player;
     }
 
-    public Player getPlayer() { return getEntity();}
-
     public static Class<? extends Event> getForgeClass() {
         return PlayerEvent.class;
     }
@@ -75,7 +74,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class HarvestCheck extends PlayerEvent
+    public static class HarvestCheck extends PlayerEventWrapper
     {
         private final BlockState state;
         private boolean success;
@@ -87,7 +86,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
             this.success = success;
         }
 
-        public HarvestCheck(HarvestCheck event) {
+        public HarvestCheck(PlayerEvent.HarvestCheck event) {
             this(event.getEntity(), event.getTargetBlock(), event.canHarvest());
         }
 
@@ -96,7 +95,12 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         public void setCanHarvest(boolean success){ this.success = success; }
 
         public static Class<? extends Event> getForgeClass() {
-            return HarvestCheck.class;
+            return PlayerEvent.HarvestCheck.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.HarvestCheck(getEntity(), getTargetBlock(), canHarvest());
         }
     }
 
@@ -120,7 +124,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
     @Cancelable
-    public static class BreakSpeed extends PlayerEvent
+    public static class BreakSpeed extends PlayerEventWrapper
     {
         private static final BlockPos LEGACY_UNKNOWN = new BlockPos(0, -1, 0);
         private final BlockState state;
@@ -137,7 +141,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
             this.pos = Optional.ofNullable(pos);
         }
 
-        public BreakSpeed(BreakSpeed event) {
+        public BreakSpeed(PlayerEvent.BreakSpeed event) {
             this(event.getEntity(), event.getState(), event.getOriginalSpeed(), event.getPosition().isPresent() ? event.getPosition().get() : null);
         }
 
@@ -148,7 +152,12 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         public Optional<BlockPos> getPosition() { return this.pos; }
 
         public static Class<? extends Event> getForgeClass() {
-            return BreakSpeed.class;
+            return PlayerEvent.BreakSpeed.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.BreakSpeed(getEntity(), getState(), getOriginalSpeed(), getPosition().isPresent() ? getPosition().get() : null);
         }
     }
 
@@ -168,7 +177,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class NameFormat extends PlayerEvent
+    public static class NameFormat extends PlayerEventWrapper
     {
         private final Component username;
         private Component displayname;
@@ -180,7 +189,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
             this.setDisplayname(username);
         }
 
-        public NameFormat(NameFormat event) {
+        public NameFormat(PlayerEvent.NameFormat event) {
             this(event.getEntity(), event.getUsername());
         }
 
@@ -200,7 +209,12 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return NameFormat.class;
+            return PlayerEvent.NameFormat.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.NameFormat(getEntity(), getUsername());
         }
     }
 
@@ -219,7 +233,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class TabListNameFormat extends PlayerEvent
+    public static class TabListNameFormat extends PlayerEventWrapper
     {
         @Nullable
         private Component displayName;
@@ -229,7 +243,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
             super(player);
         }
 
-        public TabListNameFormat(TabListNameFormat event) {
+        public TabListNameFormat(PlayerEvent.TabListNameFormat event) {
             this(event.getEntity());
         }
 
@@ -245,7 +259,12 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return TabListNameFormat.class;
+            return PlayerEvent.TabListNameFormat.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.TabListNameFormat(getEntity());
         }
     }
 
@@ -253,7 +272,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
      * Fired when the EntityPlayer is cloned, typically caused by the impl sending a RESPAWN_PLAYER event.
      * Either caused by death, or by traveling from the End to the overworld.
      */
-    public static class Clone extends PlayerEvent
+    public static class Clone extends PlayerEventWrapper
     {
         private final Player original;
         private final boolean wasDeath;
@@ -265,7 +284,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
             this.wasDeath = wasDeath;
         }
 
-        public Clone(Clone event) {
+        public Clone(PlayerEvent.Clone event) {
             this(event.getEntity(), event.getOriginal(), event.isWasDeath());
         }
 
@@ -287,7 +306,12 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return Clone.class;
+            return PlayerEvent.Clone.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.Clone(getEntity(), getOriginal(), isWasDeath());
         }
     }
 
@@ -295,7 +319,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
      * Fired when an Entity is started to be "tracked" by this player (the player receives updates about this entity, e.g. motion).
      *
      */
-    public static class StartTracking extends PlayerEvent {
+    public static class StartTracking extends PlayerEventWrapper {
 
         private final Entity target;
 
@@ -305,7 +329,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
             this.target = target;
         }
 
-        public StartTracking(StartTracking event) {
+        public StartTracking(PlayerEvent.StartTracking event) {
             this(event.getEntity(), event.getTarget());
         }
 
@@ -318,7 +342,12 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return StartTracking.class;
+            return PlayerEvent.StartTracking.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.StartTracking(getEntity(), getTarget());
         }
     }
 
@@ -326,7 +355,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
      * Fired when an Entity is stopped to be "tracked" by this player (the player no longer receives updates about this entity, e.g. motion).
      *
      */
-    public static class StopTracking extends PlayerEvent {
+    public static class StopTracking extends PlayerEventWrapper {
 
         private final Entity target;
 
@@ -336,7 +365,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
             this.target = target;
         }
 
-        public StopTracking(StopTracking event) {
+        public StopTracking(PlayerEvent.StopTracking event) {
             this(event.getEntity(), event.getTarget());
         }
 
@@ -349,7 +378,12 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return StopTracking.class;
+            return PlayerEvent.StopTracking.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.StopTracking(getEntity(), getTarget());
         }
     }
 
@@ -359,7 +393,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
      * allow mods to load an additional file from the players directory
      * containing additional mod related player data.
      */
-    public static class LoadFromFile extends PlayerEvent {
+    public static class LoadFromFile extends PlayerEventWrapper {
         private final File playerDirectory;
         private final String playerUUID;
 
@@ -370,7 +404,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
             this.playerUUID = playerUUID;
         }
 
-        public LoadFromFile(LoadFromFile event) {
+        public LoadFromFile(PlayerEvent.LoadFromFile event) {
             this(event.getEntity(), event.getPlayerDirectory(), event.getPlayerUUID());
         }
 
@@ -403,7 +437,12 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return LoadFromFile.class;
+            return PlayerEvent.LoadFromFile.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.LoadFromFile(getEntity(), getPlayerDirectory(), getPlayerUUID());
         }
     }
     /**
@@ -419,7 +458,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
      * <em>WARNING</em>: Do not overwrite the player's .dat file here. You will
      * corrupt the world state.
      */
-    public static class SaveToFile extends PlayerEvent {
+    public static class SaveToFile extends PlayerEventWrapper {
         private final File playerDirectory;
         private final String playerUUID;
 
@@ -430,7 +469,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
             this.playerUUID = playerUUID;
         }
 
-        public SaveToFile(SaveToFile event) {
+        public SaveToFile(PlayerEvent.SaveToFile event) {
             this(event.getEntity(), event.getPlayerDirectory(), event.getPlayerUUID());
         }
 
@@ -463,11 +502,16 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return SaveToFile.class;
+            return PlayerEvent.SaveToFile.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.SaveToFile(getEntity(), getPlayerDirectory(), getPlayerUUID());
         }
     }
 
-    public static class ItemPickupEvent extends PlayerEvent {
+    public static class ItemPickupEvent extends PlayerEventWrapper {
         /**
          * Original EntityItem with current remaining stack size
          */
@@ -483,7 +527,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
             this.stack = stack;
         }
 
-        public ItemPickupEvent(ItemPickupEvent event) {
+        public ItemPickupEvent(PlayerEvent.ItemPickupEvent event) {
             this(event.getEntity(), event.getOriginalEntity(), event.getStack());
         }
 
@@ -496,11 +540,16 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return ItemPickupEvent.class;
+            return PlayerEvent.ItemPickupEvent.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.ItemPickupEvent(getEntity(), getOriginalEntity(), getStack());
         }
     }
 
-    public static class ItemCraftedEvent extends PlayerEvent {
+    public static class ItemCraftedEvent extends PlayerEventWrapper {
         @NotNull
         private final ItemStack crafting;
         private final Container craftMatrix;
@@ -511,7 +560,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
             this.craftMatrix = craftMatrix;
         }
 
-        public ItemCraftedEvent(ItemCraftedEvent event) {
+        public ItemCraftedEvent(PlayerEvent.ItemCraftedEvent event) {
             this(event.getEntity(), event.getCrafting(), event.getInventory());
         }
 
@@ -527,11 +576,16 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return ItemCraftedEvent.class;
+            return PlayerEvent.ItemCraftedEvent.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.ItemCraftedEvent(getEntity(), getCrafting(), getInventory());
         }
     }
 
-    public static class ItemSmeltedEvent extends PlayerEvent {
+    public static class ItemSmeltedEvent extends PlayerEventWrapper {
         @NotNull
         private final ItemStack smelting;
         public ItemSmeltedEvent(Player player, @NotNull ItemStack crafting)
@@ -540,7 +594,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
             this.smelting = crafting;
         }
 
-        public ItemSmeltedEvent(ItemSmeltedEvent event) {
+        public ItemSmeltedEvent(PlayerEvent.ItemSmeltedEvent event) {
             this(event.getEntity(), event.getSmelting());
         }
 
@@ -551,41 +605,56 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return ItemSmeltedEvent.class;
+            return PlayerEvent.ItemSmeltedEvent.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.ItemSmeltedEvent(getEntity(), getSmelting());
         }
     }
 
-    public static class PlayerLoggedInEvent extends PlayerEvent {
+    public static class PlayerLoggedInEvent extends PlayerEventWrapper {
         public PlayerLoggedInEvent(Player player)
         {
             super(player);
         }
 
-        public PlayerLoggedInEvent(PlayerLoggedInEvent event) {
+        public PlayerLoggedInEvent(PlayerEvent.PlayerLoggedInEvent event) {
             this(event.getEntity());
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return PlayerLoggedInEvent.class;
+            return PlayerEvent.PlayerLoggedInEvent.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.PlayerLoggedInEvent(getEntity());
         }
     }
 
-    public static class PlayerLoggedOutEvent extends PlayerEvent {
+    public static class PlayerLoggedOutEvent extends PlayerEventWrapper {
         public PlayerLoggedOutEvent(Player player)
         {
             super(player);
         }
 
-        public PlayerLoggedOutEvent(PlayerLoggedOutEvent event) {
+        public PlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
             this(event.getEntity());
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return PlayerLoggedOutEvent.class;
+            return PlayerEvent.PlayerLoggedOutEvent.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.PlayerLoggedOutEvent(getEntity());
         }
     }
 
-    public static class PlayerRespawnEvent extends PlayerEvent {
+    public static class PlayerRespawnEvent extends PlayerEventWrapper {
         private final boolean endConquered;
 
         public PlayerRespawnEvent(Player player, boolean endConquered)
@@ -594,7 +663,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
             this.endConquered = endConquered;
         }
 
-        public PlayerRespawnEvent(PlayerRespawnEvent event) {
+        public PlayerRespawnEvent(PlayerEvent.PlayerRespawnEvent event) {
             this(event.getEntity(), event.isEndConquered());
         }
 
@@ -608,11 +677,16 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return PlayerRespawnEvent.class;
+            return PlayerEvent.PlayerRespawnEvent.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.PlayerRespawnEvent(getEntity(), isEndConquered());
         }
     }
 
-    public static class PlayerChangedDimensionEvent extends PlayerEvent {
+    public static class PlayerChangedDimensionEvent extends PlayerEventWrapper {
         private final ResourceKey<Level> fromDim;
         private final ResourceKey<Level> toDim;
         public PlayerChangedDimensionEvent(Player player, ResourceKey<Level> fromDim, ResourceKey<Level> toDim)
@@ -622,7 +696,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
             this.toDim = toDim;
         }
 
-        public PlayerChangedDimensionEvent(PlayerChangedDimensionEvent event) {
+        public PlayerChangedDimensionEvent(PlayerEvent.PlayerChangedDimensionEvent event) {
             this(event.getEntity(), event.getFrom(), event.getTo());
         }
 
@@ -637,7 +711,12 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return PlayerChangedDimensionEvent.class;
+            return PlayerEvent.PlayerChangedDimensionEvent.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.PlayerChangedDimensionEvent(getEntity(), getFrom(), getTo());
         }
     }
 
@@ -646,7 +725,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
      * If the event is cancelled the game mode of the player is not changed and the value of <code>newGameMode</code> is ignored.
      */
     @Cancelable
-    public static class PlayerChangeGameModeEvent extends PlayerEvent
+    public static class PlayerChangeGameModeEvent extends PlayerEventWrapper
     {
         private final GameType currentGameMode;
         private GameType newGameMode;
@@ -658,7 +737,7 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
             this.newGameMode = newGameMode;
         }
 
-        public PlayerChangeGameModeEvent(PlayerChangeGameModeEvent event) {
+        public PlayerChangeGameModeEvent(PlayerEvent.PlayerChangeGameModeEvent event) {
             this(event.getEntity(), event.getCurrentGameMode(), event.getNewGameMode());
         }
 
@@ -681,7 +760,12 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
         }
 
         public static Class<? extends Event> getForgeClass() {
-            return PlayerChangeGameModeEvent.class;
+            return PlayerEvent.PlayerChangeGameModeEvent.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerEvent.PlayerChangeGameModeEvent(getEntity(), getCurrentGameMode(), getNewGameMode());
         }
     }
 }

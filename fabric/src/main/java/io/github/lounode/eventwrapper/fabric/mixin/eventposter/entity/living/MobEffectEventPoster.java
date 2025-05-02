@@ -49,6 +49,7 @@ public abstract class MobEffectEventPoster {
     //1
     //I know this could curse many compatibility issues
     //But F-word mojang what S-word is this code?????
+    //TODO inject get iter then return a special iter to post event and cancel remove
     @Inject(
             method = "removeAllEffects",
             at = @At(value = "HEAD"),
@@ -92,14 +93,6 @@ public abstract class MobEffectEventPoster {
         if (event.isCanceled()) {
             cir.setReturnValue(false);
         }
-    }
-    //Expired
-    @Inject(
-            method = "tickEffects",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;onEffectRemoved(Lnet/minecraft/world/effect/MobEffectInstance;)V")
-    )
-    private void onEffectExpired(CallbackInfo ci, @Local MobEffectInstance mobEffectInstance) {
-        EventsWrapper.post(new MobEffectEventWrapper.Expired((LivingEntity)(Object)this, mobEffectInstance));
     }
     //Applicable
     @Inject(

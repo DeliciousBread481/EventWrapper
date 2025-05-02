@@ -11,14 +11,26 @@
     "eventposter.entity.living.LivingHealEventPoster",
     "eventposter.entity.living.LivingHurtEventPoster",
     "eventposter.entity.living.LivingHurtEventPosterPlayer",
+    "eventposter.entity.living.LivingJumpEventPoster",
+    "eventposter.entity.living.LivingTickEventPoster",
+    "eventposter.entity.living.LivingVisibilityEventPoster",
     "eventposter.entity.living.MobEffectEventPoster",
-    "eventposter.entity.living.MobEffectEventPosterApplicable"
+    "eventposter.entity.living.MobEffectEventPosterApplicable",
+    "eventposter.entity.living.MobEffectEventPosterExpired",
+    "eventposter.entity.player.AttackEntityEventPoster",
+    "eventposter.entity.player.playerevent.PlayerEventBreakSpeedEventPoster",
+    "eventposter.entity.player.playerevent.PlayerEventHarvestCheckEventPoster",
+    "eventposter.entity.player.playerevent.PlayerEventLoginEventPoster",
+    "eventposter.entity.player.playerevent.PlayerEventLogoutEventPoster",
+    "eventposter.entity.player.playerevent.PlayerEventNameFormatEventPoster",
+    "eventposter.entity.player.playerevent.TabListNameFormatEventPoster"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "client": [
     "eventposter.entity.living.LivingAttackEventPosterLocalPlayer",
-    "eventposter.entity.living.LivingAttackEventPosterRemotePlayer"
+    "eventposter.entity.living.LivingAttackEventPosterRemotePlayer",
+    "eventposter.entity.player.playerinteractevent.PlayerInteractEventLeftClickEmptyEventPoster"
   ]
 }
