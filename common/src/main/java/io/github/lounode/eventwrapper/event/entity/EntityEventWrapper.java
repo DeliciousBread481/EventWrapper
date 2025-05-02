@@ -41,7 +41,7 @@ public abstract class EntityEventWrapper extends EventWrapper {
      * EntityConstructing is fired when an Entity is being created. <br>
      * This event is fired within the constructor of the Entity.<br>
      * <br>
-     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+     * This event is not {@link Cancelable}.<br>
      * <br>
      * This event does not have a result. {@link HasResult}<br>
      * <br>
