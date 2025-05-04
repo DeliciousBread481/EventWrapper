@@ -7,20 +7,13 @@ import io.github.lounode.eventwrapper.eventbus.api.SubscribeEventWrapper;
 import io.github.lounode.eventwrapper.test.EventTest;
 import io.github.lounode.eventwrapper.test.GameTestHolder;
 import io.github.lounode.eventwrapper.test.TestUtil;
-import net.minecraft.gametest.framework.AfterBatch;
-import net.minecraft.gametest.framework.BeforeBatch;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.monster.CaveSpider;
-import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.level.Level;
 
 @GameTestHolder("eventwrapper")

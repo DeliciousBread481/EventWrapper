@@ -1,18 +1,13 @@
 package io.github.lounode.eventwrapper.test.event.entity.living;
 
-import io.github.lounode.eventwrapper.EventsWrapper;
 import io.github.lounode.eventwrapper.event.entity.living.LivingEventWrapper;
 import io.github.lounode.eventwrapper.eventbus.api.EventBusSubscriberWrapper;
 import io.github.lounode.eventwrapper.eventbus.api.SubscribeEventWrapper;
 import io.github.lounode.eventwrapper.test.EventTest;
 import io.github.lounode.eventwrapper.test.GameTestHolder;
 import io.github.lounode.eventwrapper.test.TestUtil;
-import net.minecraft.gametest.framework.AfterBatch;
-import net.minecraft.gametest.framework.BeforeBatch;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 
 @GameTestHolder("eventwrapper")
 @EventBusSubscriberWrapper
@@ -74,6 +69,9 @@ public class LivingEventTest implements EventTest {
 
     @SubscribeEventWrapper
     public static void onLivingTick(LivingEventWrapper.LivingTickEvent event) {
+        if (event.getEntity().getCustomName() == null) {
+            return;
+        }
         if (event.getEntity().getCustomName().getString().startsWith(BATCH + "Ticking")) {
             int count = Integer.parseInt(event.getEntity().getCustomName().getString().replace(BATCH + "Ticking", ""));
             count++;

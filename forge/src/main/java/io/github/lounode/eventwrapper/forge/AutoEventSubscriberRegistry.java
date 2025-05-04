@@ -2,12 +2,12 @@ package io.github.lounode.eventwrapper.forge;
 
 import io.github.lounode.eventwrapper.EventsWrapper;
 import io.github.lounode.eventwrapper.eventbus.api.EventBusSubscriberWrapper;
+import net.minecraftforge.fml.Logging;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
-import net.minecraftforge.fml.Logging;
 
 import java.util.stream.Collectors;
 

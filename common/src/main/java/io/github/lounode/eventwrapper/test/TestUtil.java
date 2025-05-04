@@ -1,6 +1,5 @@
 package io.github.lounode.eventwrapper.test;
 
-import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,7 +17,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 

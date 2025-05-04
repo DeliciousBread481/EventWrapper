@@ -208,7 +208,7 @@ publishing {
             //println "本地仓库路径: ${System.properties['user.home']}/.m2/repository"
         }
     }
-    /*
+
     repositories {
         if (System.getenv("GITHUB_ACTIONS") != null) {
 
@@ -216,6 +216,4 @@ publishing {
             mavenLocal()
         }
     }
-
-     */
 }

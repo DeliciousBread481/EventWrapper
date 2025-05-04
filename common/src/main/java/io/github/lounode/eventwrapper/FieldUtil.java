@@ -1,7 +1,8 @@
 package io.github.lounode.eventwrapper;
 
-import java.lang.reflect.Field;
 import sun.misc.Unsafe;
+
+import java.lang.reflect.Field;
 
 /**
  * @author Arnah

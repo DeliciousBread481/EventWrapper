@@ -2,7 +2,6 @@ package io.github.lounode.eventwrapper.fabric.mixin.eventposter.entity.living;
 
 import io.github.lounode.eventwrapper.EventsWrapper;
 import io.github.lounode.eventwrapper.event.entity.living.LivingAttackEventWrapper;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;

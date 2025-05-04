@@ -5,7 +5,6 @@ import io.github.lounode.eventwrapper.eventbus.api.Cancelable;
 import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.Entity;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;

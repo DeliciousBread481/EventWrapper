@@ -1,6 +1,9 @@
 package io.github.lounode.eventwrapper;
 
-import io.github.lounode.eventwrapper.eventbus.api.*;
+import io.github.lounode.eventwrapper.eventbus.api.BusBuilder;
+import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
+import io.github.lounode.eventwrapper.eventbus.api.IEventBus;
+import io.github.lounode.eventwrapper.eventbus.api.IPlatformEventHelper;
 
 public class EventsWrapper {
     public static EventsWrapper INSTANCE = new EventsWrapper();

@@ -7,7 +7,6 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.IntFunction;
-import java.util.function.Supplier;
 /*
  *
  * Helper class that should be faster then ConcurrentHashMap,

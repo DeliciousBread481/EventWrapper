@@ -2,7 +2,6 @@ package io.github.lounode.eventwrapper.fabric;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
-
 import net.fabricmc.loader.impl.ModContainerImpl;
 
 

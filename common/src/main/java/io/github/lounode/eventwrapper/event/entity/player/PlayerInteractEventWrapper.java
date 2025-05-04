@@ -74,6 +74,19 @@ public class PlayerInteractEventWrapper extends PlayerEventWrapper{
         {
             return target;
         }
+
+        public EntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) {
+            this(event.getEntity(), event.getHand(), event.getTarget(), event.getLocalPos());
+        }
+
+        public static Class<? extends Event> getForgeClass() {
+            return PlayerInteractEvent.EntityInteractSpecific.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerInteractEvent.EntityInteractSpecific(getEntity(), getHand(), getTarget(), getLocalPos());
+        }
     }
 
     /**
@@ -103,6 +116,19 @@ public class PlayerInteractEventWrapper extends PlayerEventWrapper{
         public Entity getTarget()
         {
             return target;
+        }
+
+        public EntityInteract(PlayerInteractEvent.EntityInteract event) {
+            this(event.getEntity(), event.getHand(), event.getTarget());
+        }
+
+        public static Class<? extends Event> getForgeClass() {
+            return PlayerInteractEvent.EntityInteract.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerInteractEvent.EntityInteract(getEntity(), getHand(), getTarget());
         }
     }
 
@@ -186,6 +212,19 @@ public class PlayerInteractEventWrapper extends PlayerEventWrapper{
                 useItem = Result.DENY;
             }
         }
+
+        public RightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+            this(event.getEntity(), event.getHand(), event.getPos(), event.getHitVec());
+        }
+
+        public static Class<? extends Event> getForgeClass() {
+            return PlayerInteractEvent.RightClickBlock.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerInteractEvent.RightClickBlock(getEntity(), getHand(), getPos(), getHitVec());
+        }
     }
 
     /**
@@ -202,6 +241,19 @@ public class PlayerInteractEventWrapper extends PlayerEventWrapper{
         {
             super(player, hand, player.blockPosition(), null);
         }
+
+        public RightClickItem(PlayerInteractEvent.RightClickItem event) {
+            this(event.getEntity(), event.getHand());
+        }
+
+        public static Class<? extends Event> getForgeClass() {
+            return PlayerInteractEvent.RightClickItem.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerInteractEvent.RightClickItem(getEntity(), getHand());
+        }
     }
 
     /**
@@ -214,6 +266,19 @@ public class PlayerInteractEventWrapper extends PlayerEventWrapper{
         public RightClickEmpty(Player player, InteractionHand hand)
         {
             super(player, hand, player.blockPosition(), null);
+        }
+
+        public RightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
+            this(event.getEntity(), event.getHand());
+        }
+
+        public static Class<? extends Event> getForgeClass() {
+            return PlayerInteractEvent.RightClickEmpty.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerInteractEvent.RightClickEmpty(getEntity(), getHand());
         }
     }
 
@@ -323,6 +388,19 @@ public class PlayerInteractEventWrapper extends PlayerEventWrapper{
                     case ABORT_DESTROY_BLOCK -> ABORT;
                 };
             }
+        }
+
+        public LeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+            this(event.getEntity(), event.getPos(), event.getFace(), Action.valueOf(event.getAction().name()));
+        }
+
+        public static Class<? extends Event> getForgeClass() {
+            return PlayerInteractEvent.LeftClickBlock.class;
+        }
+
+        @Override
+        public Object toForgeEvent() {
+            return new PlayerInteractEvent.LeftClickBlock(getEntity(), getPos(), getFace(), PlayerInteractEvent.LeftClickBlock.Action.valueOf(getAction().name()));
         }
     }
 

@@ -1,7 +1,6 @@
 package io.github.lounode.eventwrapper.forge;
 
 
-import io.github.lounode.eventwrapper.EventsWrapper;
 import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
 import io.github.lounode.eventwrapper.eventbus.api.IPlatformEventHelper;
 import io.github.lounode.eventwrapper.eventbus.api.SubscribeEventWrapper;
@@ -10,11 +9,10 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.stream.Stream;
 
 public class ForgeEventHelper implements IPlatformEventHelper {

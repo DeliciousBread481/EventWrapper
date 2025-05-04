@@ -1,6 +1,9 @@
 package io.github.lounode.eventwrapper.eventbus;
 
-import io.github.lounode.eventwrapper.eventbus.api.*;
+import io.github.lounode.eventwrapper.eventbus.api.BusBuilder;
+import io.github.lounode.eventwrapper.eventbus.api.IEventBus;
+import io.github.lounode.eventwrapper.eventbus.api.IEventClassChecker;
+import io.github.lounode.eventwrapper.eventbus.api.IEventExceptionHandler;
 
 /**
  * BusBuilder Implementation, public for BusBuilder.builder() only, don't use this directly.

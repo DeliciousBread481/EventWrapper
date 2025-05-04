@@ -3,7 +3,8 @@ package io.github.lounode.eventwrapper.eventbus.api;
 import io.github.lounode.eventwrapper.eventbus.EventListenerFactory;
 import io.github.lounode.eventwrapper.eventbus.IWrapperListener;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+
 import static org.objectweb.asm.Type.getMethodDescriptor;
 
 /**

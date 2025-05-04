@@ -1,12 +1,7 @@
 package io.github.lounode.eventwrapper.fabric;
 
 import io.github.lounode.eventwrapper.EventsWrapper;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.LanguageAdapter;
-import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.fabricmc.loader.impl.ModContainerImpl;
-import net.fabricmc.loader.impl.entrypoint.EntrypointStorage;
-import net.fabricmc.loader.impl.metadata.EntrypointMetadata;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
 import org.objectweb.asm.AnnotationVisitor;
@@ -17,12 +12,10 @@ import org.objectweb.asm.Opcodes;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class AutoEventSubscriberRegistryFabric {
     public static final LogCategory CATEGORY = LogCategory.create("Event Wrapper");
