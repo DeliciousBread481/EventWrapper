@@ -32,5 +32,6 @@
     "eventposter.entity.living.LivingAttackEventPosterLocalPlayer",
     "eventposter.entity.living.LivingAttackEventPosterRemotePlayer",
     "eventposter.entity.player.playerinteractevent.PlayerInteractEventLeftClickEmptyEventPoster"
-  ]
+  ],
+  "refmap": "eventwrapper.refmap.json"
 }
