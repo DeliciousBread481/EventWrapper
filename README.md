@@ -16,12 +16,12 @@ HERE IS SOLUTION:
 public SomeClass {
     
     @SubscriberEventWrapper
-    private static void onHeal (LivingHealEventWrapper event) {
+    public static void onHeal (LivingHealEventWrapper event) {
         //Some code on LivingEntity heal...
     }
     
     @SubscriberEventWrapper
-    private static void onEffect(MobEffectEventWrapper event) {
+    public static void onEffect(MobEffectEventWrapper event) {
         //Some code on LivingEntity add a effect...
     }
 }
@@ -51,4 +51,15 @@ We plan to support one `Main Version` each big minecraft version: `1.20.1`,`1.21
 Some libraries have caused serious migration disasters, so our principle is easy to use and easy to migrate out.
 
 # Use in project
-WIP
+```groovy
+repositories {
+    maven { 
+        url = uri("https://jitpack.io") 
+    }
+}
+
+//Choose one
+modImplementation("com.github.Lounode.EventWrapper:eventwrapper-common:1.20.1-SNAPSHOT")
+modImplementation("com.github.Lounode.EventWrapper:eventwrapper-forge:1.20.1-SNAPSHOT")
+modImplementation("com.github.Lounode.EventWrapper:eventwrapper-fabric:1.20.1-SNAPSHOT")
+```
