@@ -63,3 +63,19 @@ modImplementation("com.github.Lounode.EventWrapper:eventwrapper-common:1.20.1-SN
 modImplementation("com.github.Lounode.EventWrapper:eventwrapper-forge:1.20.1-SNAPSHOT")
 modImplementation("com.github.Lounode.EventWrapper:eventwrapper-fabric:1.20.1-SNAPSHOT")
 ```
+On forge it will automatic resolve event register
+
+Fabric there need some manual call:
+
+```java
+
+@Override
+public void onInitialize() {
+    FabricLoader.getInstance().getModContainer("your_mod_id").ifPresent(mod -> {
+        if (mod instanceof ModContainerImpl impl) {
+            AutoEventSubscriberRegistryFabric.register(impl);
+        }
+    });
+}
+
+```
