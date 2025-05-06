@@ -65,6 +65,13 @@ jobs:
           path: |
             ${{ steps.calculate_artifact_names.outputs.forge }}
             ${{ steps.calculate_artifact_names.outputs.forge }}.asc
+
+      - name: Publish to Maven
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_TOKEN: ${{ secrets.MAVEN_TOKEN }}
+        run: ./gradlew publish
+
       - name: Upload Releases
         if: startsWith(github.ref, 'refs/tags/release-')
         env:

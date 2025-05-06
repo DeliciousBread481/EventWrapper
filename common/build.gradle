@@ -137,7 +137,14 @@ publishing {
     }
     repositories {
         if (System.getenv("GITHUB_ACTIONS") != null) {
-
+            maven {
+                name = "lounode"
+                url = "https://maven.lounode.top/releases"
+                credentials {
+                    username = System.getenv("MAVEN_USERNAME")
+                    password = System.getenv("MAVEN_TOKEN")
+                }
+            }
         } else {
             mavenLocal()
         }
