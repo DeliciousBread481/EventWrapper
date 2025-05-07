@@ -10,3 +10,4 @@ extendable method net/minecraft/world/entity/vehicle/AbstractMinecart getDropIte
 extendable class net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator
 accessible class net/minecraft/client/resources/model/ModelManager$ReloadState
 accessible class net/minecraft/server/network/ServerGamePacketListenerImpl$EntityInteraction
+accessible field net/minecraft/world/level/storage/PlayerDataStorage playerDir Ljava/io/File;

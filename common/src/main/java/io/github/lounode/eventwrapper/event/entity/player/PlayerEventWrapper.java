@@ -124,11 +124,11 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
     @Cancelable
     public static class BreakSpeed extends PlayerEventWrapper
     {
-        private static final BlockPos LEGACY_UNKNOWN = new BlockPos(0, -1, 0);
+        private static final BlockPos LEGACY_UNKNOWN = new BlockPos(0, -114514, 0);
         private final BlockState state;
         private final float originalSpeed;
         private float newSpeed = 0.0f;
-        private final Optional<BlockPos> pos; // Y position of -1 notes unknown location
+        private final Optional<BlockPos> pos; // Y position of -114514 notes unknown location
 
         public BreakSpeed(Player player, BlockState state, float original, @Nullable BlockPos pos)
         {

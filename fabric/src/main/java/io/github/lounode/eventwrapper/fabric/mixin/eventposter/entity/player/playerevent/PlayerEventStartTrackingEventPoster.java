@@ -1,22 +1,27 @@
 package io.github.lounode.eventwrapper.fabric.mixin.eventposter.entity.player.playerevent;
 
 import io.github.lounode.eventwrapper.fabric.EventWrapperHooks;
-import net.minecraft.network.Connection;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.entity.Entity;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(PlayerList.class)
-public class PlayerEventLoginEventPoster {
+@Mixin(ServerEntity.class)
+public class PlayerEventStartTrackingEventPoster {
+
+    @Shadow @Final private Entity entity;
 
     @Inject(
-            method = "placeNewPlayer",
+            method = "addPairing",
             at = @At("RETURN")
+
     )
-    private void onPlayerLogin(Connection netManager, ServerPlayer player, CallbackInfo ci) {
-        EventWrapperHooks.firePlayerLoggedIn(player);
+    private void onStartTracking(ServerPlayer player, CallbackInfo ci) {
+        EventWrapperHooks.onStartEntityTracking(this.entity, player);
     }
 }

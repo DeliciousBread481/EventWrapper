@@ -1,7 +1,6 @@
 package io.github.lounode.eventwrapper.fabric.mixin.eventposter.entity.player.playerevent;
 
-import io.github.lounode.eventwrapper.EventsWrapper;
-import io.github.lounode.eventwrapper.event.entity.player.PlayerEventWrapper;
+import io.github.lounode.eventwrapper.fabric.EventWrapperHooks;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,10 +17,8 @@ public abstract class PlayerEventHarvestCheckEventPoster {
             cancellable = true
     )
     private void onHarvestCheck(BlockState state, CallbackInfoReturnable<Boolean> cir) {
-        PlayerEventWrapper.HarvestCheck event = new PlayerEventWrapper.HarvestCheck((Player) (Object) this, state, cir.getReturnValue());
-
-        EventsWrapper.post(event);
-
-        cir.setReturnValue(event.canHarvest());
+        if (!cir.getReturnValue()) {
+            cir.setReturnValue(EventWrapperHooks.isCorrectToolForDrops(state, (Player) (Object) this));
+        }
     }
 }

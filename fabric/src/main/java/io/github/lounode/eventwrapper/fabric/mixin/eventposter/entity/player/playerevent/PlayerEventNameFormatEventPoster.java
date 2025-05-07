@@ -1,7 +1,6 @@
 package io.github.lounode.eventwrapper.fabric.mixin.eventposter.entity.player.playerevent;
 
-import io.github.lounode.eventwrapper.EventsWrapper;
-import io.github.lounode.eventwrapper.event.entity.player.PlayerEventWrapper;
+import io.github.lounode.eventwrapper.fabric.EventWrapperHooks;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,8 +16,7 @@ public abstract class PlayerEventNameFormatEventPoster {
             at = @At("RETURN"),
             cancellable = true)
     private void onGetDisplayName(CallbackInfoReturnable<Component> cir) {
-        PlayerEventWrapper.NameFormat event = new PlayerEventWrapper.NameFormat((Player)(Object)this, cir.getReturnValue());
-        EventsWrapper.post(event);
-        cir.setReturnValue(event.getDisplayname() == null ? event.getUsername() : event.getDisplayname());
+        Component component = EventWrapperHooks.getPlayerDisplayName((Player)(Object)this, cir.getReturnValue());
+        cir.setReturnValue(component == null ? cir.getReturnValue() : component);
     }
 }

@@ -1,7 +1,6 @@
 package io.github.lounode.eventwrapper.fabric.mixin.eventposter.entity.player.playerevent;
 
-import io.github.lounode.eventwrapper.EventsWrapper;
-import io.github.lounode.eventwrapper.event.entity.player.PlayerEventWrapper;
+import io.github.lounode.eventwrapper.fabric.EventWrapperHooks;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,12 +16,9 @@ public class TabListNameFormatEventPoster {
             at = @At("RETURN"),
             cancellable = true)
     private void onGetTablistName(CallbackInfoReturnable<Component> cir) {
-        PlayerEventWrapper.TabListNameFormat event = new PlayerEventWrapper.TabListNameFormat((ServerPlayer) (Object) this);
-
-        EventsWrapper.post(event);
-
-        if (event.getDisplayName() != null) {
-            cir.setReturnValue(event.getDisplayName());
+        Component component = EventWrapperHooks.getPlayerTabListDisplayName((ServerPlayer) (Object) this);
+        if (component != null) {
+            cir.setReturnValue(component);
         }
     }
 }
