@@ -1,7 +1,6 @@
 package io.github.lounode.eventwrapper.fabric.mixin.eventposter.entity.player.playerinteractevent;
 
-import io.github.lounode.eventwrapper.EventsWrapper;
-import io.github.lounode.eventwrapper.event.entity.player.PlayerInteractEventWrapper;
+import io.github.lounode.eventwrapper.fabric.EventWrapperHooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +18,6 @@ public class PlayerInteractEventLeftClickEmptyEventPoster {
 
     @Inject(method = "startAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;resetAttackStrengthTicker()V"))
     private void leftClickEmpty(CallbackInfoReturnable<Boolean> cir) {
-        EventsWrapper.post(new PlayerInteractEventWrapper.LeftClickEmpty(player));
+        EventWrapperHooks.onEmptyLeftClick(player);
     }
 }

@@ -54,7 +54,13 @@ Some libraries have caused serious migration disasters, so our principle is easy
 ```groovy
 repositories {
     maven { 
-        url = uri("https://jitpack.io") 
+        name = "jitpack"
+        url = "https://jitpack.io"
+    }
+    //Or
+    maven {
+        name = "lounode"
+        url = "https://maven.lounode.top/releases"
     }
 }
 
@@ -62,6 +68,13 @@ repositories {
 modImplementation("com.github.Lounode.EventWrapper:eventwrapper-common:1.20.1-SNAPSHOT")
 modImplementation("com.github.Lounode.EventWrapper:eventwrapper-forge:1.20.1-SNAPSHOT")
 modImplementation("com.github.Lounode.EventWrapper:eventwrapper-fabric:1.20.1-SNAPSHOT")
+
+//If use not jitpack:
+//Choose one
+modImplementation("io.github.lounode.eventwrapper:eventwrapper-common:1.20.1-1.0.0-SNAPSHOT")
+modImplementation("io.github.lounode.eventwrapper:eventwrapper-forge:1.20.1-SNAPSHOT")
+modImplementation("io.github.lounode.eventwrapper:eventwrapper-fabric:1.20.1-SNAPSHOT")
+
 ```
 On forge it will automatic resolve event register
 

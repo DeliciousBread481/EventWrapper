@@ -23,7 +23,13 @@
     "eventposter.entity.player.playerevent.PlayerEventLoginEventPoster",
     "eventposter.entity.player.playerevent.PlayerEventLogoutEventPoster",
     "eventposter.entity.player.playerevent.PlayerEventNameFormatEventPoster",
-    "eventposter.entity.player.playerevent.TabListNameFormatEventPoster"
+    "eventposter.entity.player.playerevent.TabListNameFormatEventPoster",
+    "eventposter.entity.player.playerinteractevent.PlayerInteractEventEntityInteractEventPoster",
+    "eventposter.entity.player.playerinteractevent.PlayerInteractEventEntityInteractSpecificEventPoster",
+    "eventposter.entity.player.playerinteractevent.PlayerInteractEventLeftClickBlockServer",
+    "eventposter.entity.player.playerinteractevent.PlayerInteractEventRightClickBlockEventPosterServer",
+    "eventposter.entity.player.playerinteractevent.PlayerInteractEventRightClickEmptyEventPoster",
+    "eventposter.entity.player.playerinteractevent.PlayerInteractEventUseItemClientEventPosterServer"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -31,7 +37,12 @@
   "client": [
     "eventposter.entity.living.LivingAttackEventPosterLocalPlayer",
     "eventposter.entity.living.LivingAttackEventPosterRemotePlayer",
-    "eventposter.entity.player.playerinteractevent.PlayerInteractEventLeftClickEmptyEventPoster"
+    "eventposter.entity.player.playerinteractevent.PlayerInteractEventClientMineHoldEventPoster",
+    "eventposter.entity.player.playerinteractevent.PlayerInteractEventEntityInteractSpecificEventPoster2",
+    "eventposter.entity.player.playerinteractevent.PlayerInteractEventLeftClickBlockClient",
+    "eventposter.entity.player.playerinteractevent.PlayerInteractEventLeftClickEmptyEventPoster",
+    "eventposter.entity.player.playerinteractevent.PlayerInteractEventRightClickBlockEventPosterClient",
+    "eventposter.entity.player.playerinteractevent.PlayerInteractEventUseItemClientEventPoster"
   ],
   "refmap": "eventwrapper.refmap.json"
 }
