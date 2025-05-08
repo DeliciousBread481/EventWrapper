@@ -4,9 +4,6 @@
   "package": "io.github.lounode.eventwrapper.fabric.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "eventposter.entity.furnace.FurnaceBurnTimeEventPosterFabricAPI",
-    "eventposter.entity.furnace.FurnaceBurnTimeEventPosterFurnaceBlockEntity",
-    "eventposter.entity.furnace.FurnaceBurnTimeEventPosterFurnaceMenu",
     "eventposter.entity.living.LivingAttackEventPoster",
     "eventposter.entity.living.LivingAttackEventPosterPlayer",
     "eventposter.entity.living.LivingDamageEventPoster",
@@ -44,7 +41,11 @@
     "eventposter.entity.player.playerinteractevent.PlayerInteractEventLeftClickBlockServer",
     "eventposter.entity.player.playerinteractevent.PlayerInteractEventRightClickBlockEventPosterServer",
     "eventposter.entity.player.playerinteractevent.PlayerInteractEventRightClickEmptyEventPoster",
-    "eventposter.entity.player.playerinteractevent.PlayerInteractEventUseItemClientEventPosterServer"
+    "eventposter.entity.player.playerinteractevent.PlayerInteractEventUseItemClientEventPosterServer",
+    "eventposter.furnace.FurnaceBurnTimeEventPosterFabricAPI",
+    "eventposter.furnace.FurnaceBurnTimeEventPosterFurnaceBlockEntity",
+    "eventposter.furnace.FurnaceBurnTimeEventPosterFurnaceMenu",
+    "eventposter.server.ServerLifecycleEventPoster"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,4 +1,4 @@
-package io.github.lounode.eventwrapper.fabric.mixin.eventposter.entity.furnace;
+package io.github.lounode.eventwrapper.fabric.mixin.eventposter.furnace;
 
 import io.github.lounode.eventwrapper.fabric.EventWrapperHooks;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;

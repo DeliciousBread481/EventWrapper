@@ -5,6 +5,7 @@ import io.github.lounode.eventwrapper.event.entity.player.EntityItemPickupEventW
 import io.github.lounode.eventwrapper.event.entity.player.PlayerEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.PlayerInteractEventWrapper;
 import io.github.lounode.eventwrapper.event.furnace.FurnaceFuelBurnTimeEventWrapper;
+import io.github.lounode.eventwrapper.event.server.*;
 import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl;
@@ -13,6 +14,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -223,5 +225,25 @@ public class EventWrapperHooks {
         }
 
         return event.getBurnTime();
+    }
+
+    public static void onServerStarting(MinecraftServer minecraftServer) {
+        EventsWrapper.post(new ServerStartingEventWrapper(minecraftServer));
+    }
+
+    public static void onServerStarted(MinecraftServer minecraftServer) {
+        EventsWrapper.post(new ServerStartedEventWrapper(minecraftServer));
+    }
+
+    public static void onServerStopping(MinecraftServer minecraftServer) {
+        EventsWrapper.post(new ServerStoppingEventWrapper(minecraftServer));
+    }
+
+    public static void onServerStopped(MinecraftServer minecraftServer) {
+        EventsWrapper.post(new ServerStoppedEventWrapper(minecraftServer));
+    }
+
+    public static void onServerAboutToStart(MinecraftServer minecraftServer) {
+        EventsWrapper.post(new ServerAboutToStartEventWrapper(minecraftServer));
     }
 }
