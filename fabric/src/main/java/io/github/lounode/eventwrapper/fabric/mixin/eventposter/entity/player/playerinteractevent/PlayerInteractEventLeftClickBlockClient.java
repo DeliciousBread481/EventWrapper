@@ -12,7 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Final;
@@ -47,7 +46,7 @@ public abstract class PlayerInteractEventLeftClickBlockClient {
             method = "method_41930",
             at = @At("HEAD")
     )
-    private void startDestroyBlock2GetEvent(BlockState blockState, BlockPos blockPos, Direction direction, int i, CallbackInfoReturnable<Packet> cir, @Share("event") LocalRef<PlayerInteractEventWrapper.LeftClickBlock> event, @Local(argsOnly = true) BlockPos loc, @Local(argsOnly = true) Direction face) {
+    private void startDestroyBlock2GetEvent(BlockState blockState, BlockPos blockPos, Direction direction, int i, CallbackInfoReturnable<ServerboundPlayerActionPacket> cir, @Share("event") LocalRef<PlayerInteractEventWrapper.LeftClickBlock> event, @Local(argsOnly = true) BlockPos loc, @Local(argsOnly = true) Direction face) {
         event.set(EventWrapperHooks.onLeftClickBlock(this.minecraft.player, loc, face, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK));
     }
 
@@ -69,7 +68,7 @@ public abstract class PlayerInteractEventLeftClickBlockClient {
                     target = "Lnet/minecraft/world/level/block/state/BlockState;getDestroyProgress(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)F"
             ),
             cancellable = true)
-    private void startDestroyBlock2Packet(BlockState blockState, BlockPos blockPos, Direction direction, int i, CallbackInfoReturnable<Packet> cir, @Share("event") LocalRef<PlayerInteractEventWrapper.LeftClickBlock> event, @Local(argsOnly = true) BlockPos loc, @Local(argsOnly = true) Direction face) {
+    private void startDestroyBlock2Packet(BlockState blockState, BlockPos blockPos, Direction direction, int i, CallbackInfoReturnable<ServerboundPlayerActionPacket> cir, @Share("event") LocalRef<PlayerInteractEventWrapper.LeftClickBlock> event, @Local(argsOnly = true) BlockPos loc, @Local(argsOnly = true) Direction face) {
         ServerboundPlayerActionPacket packet =
                 new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, loc, face, i);
         if (event.get().getUseItem() == EventWrapper.Result.DENY) {

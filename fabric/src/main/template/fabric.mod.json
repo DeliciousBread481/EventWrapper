@@ -26,6 +26,8 @@
     "eventwrapper_common.mixins.json",
     "eventwrapper_fabric.mixins.json"
   ],
+  
+  "accessWidener": "eventwrapper.accesswidener",
 
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",
