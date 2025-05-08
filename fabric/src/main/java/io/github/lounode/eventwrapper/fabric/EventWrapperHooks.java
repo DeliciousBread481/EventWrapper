@@ -4,7 +4,10 @@ import io.github.lounode.eventwrapper.EventsWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.EntityItemPickupEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.PlayerEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.PlayerInteractEventWrapper;
+import io.github.lounode.eventwrapper.event.furnace.FurnaceFuelBurnTimeEventWrapper;
 import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
+import net.fabricmc.fabric.api.registry.FuelRegistry;
+import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -16,7 +19,9 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -195,4 +200,28 @@ public class EventWrapperHooks {
         }
     }
 
+    public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
+        if (stack.isEmpty()) {
+            return 0;
+        }
+        Item item = stack.getItem();
+        var map = ((FuelRegistryImpl)FuelRegistry.INSTANCE).getFuelTimes();
+        Integer burnTime = map.getOrDefault(item, null);
+        int time = burnTime == null ? 0 : burnTime ;
+        return getItemBurnTime(stack, time, recipeType);
+    }
+
+    public static int getItemBurnTime(@NotNull ItemStack itemStack, int burnTime, @Nullable RecipeType<?> recipeType)
+    {
+        FurnaceFuelBurnTimeEventWrapper event = new FurnaceFuelBurnTimeEventWrapper(itemStack, burnTime, recipeType);
+        EventsWrapper.post(event);
+
+        Item item = itemStack.getItem();
+        if (event.isCanceled()) {
+            FuelRegistry.INSTANCE.remove(item);
+            FuelRegistry.INSTANCE.add(item, event.getBurnTime());
+        }
+
+        return event.getBurnTime();
+    }
 }

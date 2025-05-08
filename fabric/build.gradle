@@ -145,6 +145,7 @@ dependencies {
     //modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.2.1"
 
     compileOnly "com.demonwav.mcdev:annotations:1.0" // only to shut up compile warnings from CCA's usage of CheckEnv and Env
+    compileOnly "com.google.code.findbugs:jsr305:3.0.2"
     compileOnly "net.minecraftforge:forge:${minecraft_version}-${forge_version}:universal"
     compileOnly "net.minecraftforge:eventbus:6.0.3"
 

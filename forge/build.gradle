@@ -115,6 +115,7 @@ dependencies {
     modRuntimeOnly ("curse.maven:nbtedit-reborn-678133:5984630")
 
     compileOnly "org.jetbrains:annotations:24.0.1"
+    compileOnly "com.google.code.findbugs:jsr305:3.0.2"
     compileOnly "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
     //implementation fileTree(dir: "${rootDir}/lib", include: ['*.jar'])
