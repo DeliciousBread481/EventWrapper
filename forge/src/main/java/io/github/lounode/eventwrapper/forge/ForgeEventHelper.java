@@ -4,9 +4,12 @@ package io.github.lounode.eventwrapper.forge;
 import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
 import io.github.lounode.eventwrapper.eventbus.api.IPlatformEventHelper;
 import io.github.lounode.eventwrapper.eventbus.api.SubscribeEventWrapper;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -84,9 +87,21 @@ public class ForgeEventHelper implements IPlatformEventHelper {
         checkSupertypes(clazz, clazz);
         int foundMethods = 0;
 
+        if (clazz.isAnnotationPresent(OnlyIn.class)) {
+            if (clazz.getAnnotation(OnlyIn.class).value() == Dist.CLIENT && FMLEnvironment.dist != Dist.CLIENT) {
+                return;
+            }
+        }
+
+
         for (Method method : clazz.getDeclaredMethods()) {
             if (!method.isAnnotationPresent(SubscribeEventWrapper.class)) {
                 continue;
+            }
+            if (method.isAnnotationPresent(OnlyIn.class)) {
+                if (method.getAnnotation(OnlyIn.class).value() == Dist.CLIENT && FMLEnvironment.dist != Dist.CLIENT) {
+                    return;
+                }
             }
 
             if (Modifier.isStatic(method.getModifiers()) == isStatic) {
