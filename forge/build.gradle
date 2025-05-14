@@ -112,7 +112,7 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     modRuntimeOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
-    modRuntimeOnly ("curse.maven:nbtedit-reborn-678133:5984630")
+    //modRuntimeOnly ("curse.maven:nbtedit-reborn-678133:5984630")
 
     compileOnly "org.jetbrains:annotations:24.0.1"
     compileOnly "com.google.code.findbugs:jsr305:3.0.2"

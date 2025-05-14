@@ -3,7 +3,6 @@ package io.github.lounode.eventwrapper.forge;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 
@@ -15,7 +14,7 @@ public class ForgeCommonInitializer {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Type MOD_TYPE = Type.getType(Mod.class);
 
-    public ForgeCommonInitializer(FMLJavaModLoadingContext context)
+    public ForgeCommonInitializer()
     {
         var modInfos = ModList.get().getMods();
 

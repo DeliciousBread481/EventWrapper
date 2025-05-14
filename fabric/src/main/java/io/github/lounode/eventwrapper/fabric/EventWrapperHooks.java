@@ -69,17 +69,19 @@ public class EventWrapperHooks {
     //server 1
     public static PlayerInteractEventWrapper.LeftClickBlock onLeftClickBlock(Player player, BlockPos pos, Direction face, ServerboundPlayerActionPacket.Action action)
     {
-        PlayerInteractEventWrapper.LeftClickBlock evt = new PlayerInteractEventWrapper.LeftClickBlock(player, pos, face, PlayerInteractEventWrapper.LeftClickBlock.Action.convert(action));
+        PlayerInteractEventWrapper.LeftClickBlock evt = new PlayerInteractEventWrapper.LeftClickBlock(player, pos, face);
         EventsWrapper.post(evt);
         return evt;
     }
-
+    /*
     public static PlayerInteractEventWrapper.LeftClickBlock onClientMineHold(Player player, BlockPos pos, Direction face)
     {
         PlayerInteractEventWrapper.LeftClickBlock evt = new PlayerInteractEventWrapper.LeftClickBlock(player, pos, face, PlayerInteractEventWrapper.LeftClickBlock.Action.CLIENT_HOLD);
         EventsWrapper.post(evt);
         return evt;
     }
+
+     */
 
     public static PlayerInteractEventWrapper.RightClickBlock onRightClickBlock(Player player, InteractionHand hand, BlockPos pos, BlockHitResult hitVec)
     {
