@@ -2,26 +2,25 @@ package io.github.lounode.eventwrapper.forge;
 
 import io.github.lounode.eventwrapper.EventsWrapper;
 import io.github.lounode.eventwrapper.eventbus.api.EventBusSubscriberWrapper;
-import net.minecraftforge.api.distmarker.Dist;
+import io.github.lounode.eventwrapper.eventbus.api.OnlyIn;
+import io.github.lounode.eventwrapper.eventbus.api.Dist;
 import net.minecraftforge.fml.Logging;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
 
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class AutoEventSubscriberRegistry {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Type AUTO_SUBSCRIBER = Type.getType(EventBusSubscriberWrapper.class);
     private static final Type MOD_TYPE = Type.getType(Mod.class);
+    private static final Type ONLY_IN_TYPE = Type.getType(OnlyIn.class);
+    private static final Type FORGE_ONLY_IN_TYPE = Type.getType(net.minecraftforge.api.distmarker.OnlyIn.class);
 
     public static void inject(String modId) {
         var scanDatas = ModList.get().getAllScanData();
@@ -54,7 +53,26 @@ public class AutoEventSubscriberRegistry {
                 .filter(data -> AUTO_SUBSCRIBER.equals(data.annotationType()))
                 .toList();
 
+        var clientOnlyClasses = scanData.getAnnotations().stream()
+                .filter(data -> ONLY_IN_TYPE.equals(data.annotationType()) || FORGE_ONLY_IN_TYPE.equals(data.annotationType()))
+                .filter(data -> {
+                    try {
+                        var value = data.annotationData().get("value");
+                        return value == Dist.CLIENT || value == net.minecraftforge.api.distmarker.Dist.CLIENT;
+                    } catch (Exception e) {
+                        return false;
+                    }
+                })
+                .map(data -> data.clazz().getClassName())
+                .collect(Collectors.toSet());
+
         for (var data : targets) {
+
+            if (FMLEnvironment.dist != net.minecraftforge.api.distmarker.Dist.CLIENT && clientOnlyClasses.contains(data.clazz().getClassName())) {
+                LOGGER.warn("Skipping client class {}", data.clazz().getClassName());
+                continue;
+            }
+            /*
             @SuppressWarnings("unchecked")
             final List<ModAnnotation.EnumHolder> sidesValue = (List<ModAnnotation.EnumHolder>)data.annotationData().
                     getOrDefault("value", Arrays.asList(new ModAnnotation.EnumHolder(null, "CLIENT"), new ModAnnotation.EnumHolder(null, "DEDICATED_SERVER")));
@@ -63,8 +81,8 @@ public class AutoEventSubscriberRegistry {
                     collect(Collectors.toCollection(() -> EnumSet.noneOf(Dist.class)));
 
 
-            if (sides.contains(FMLEnvironment.dist)) {
-
+            if (FMLEnvironment.dist) {
+            */
                 LOGGER.debug(Logging.LOADING, "Auto-subscribing {}", data.clazz().getClassName());
                 try {
                     EventsWrapper.register(Class.forName(data.clazz().getClassName()));
@@ -77,7 +95,7 @@ public class AutoEventSubscriberRegistry {
                 catch (NoClassDefFoundError e) {
                     LOGGER.error(Logging.LOADING, "Class {} was not found", data.clazz(), e);
                 }
-            }
+            //}
         }
     }
 
