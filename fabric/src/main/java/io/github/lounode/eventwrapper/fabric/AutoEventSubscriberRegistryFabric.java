@@ -49,7 +49,15 @@ public class AutoEventSubscriberRegistryFabric {
                                             try {
                                                 Class<?> clazz = Class.forName(className, false, getClass().getClassLoader());
                                                 EventsWrapper.register(clazz);
-                                            } catch (ClassNotFoundException ignored) {}
+                                            } catch (RuntimeException e) {
+                                                Log.error(CATEGORY, "Error when register event in {}." , className);
+                                            }
+                                            catch (ClassNotFoundException e) {
+                                                Log.error(CATEGORY, "Failed to load mod class {} for @EventBusSubscriber annotation", className, e);
+                                            }
+                                            catch (NoClassDefFoundError e) {
+                                                Log.error(CATEGORY, "Class {} was not found", className, e);
+                                            }
                                         }
                                         return null;
                                     }

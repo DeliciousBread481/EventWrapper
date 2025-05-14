@@ -69,11 +69,13 @@ public class AutoEventSubscriberRegistry {
                 try {
                     EventsWrapper.register(Class.forName(data.clazz().getClassName()));
                 } catch (RuntimeException e) {
-                    LOGGER.error(Logging.LOADING, "Error when register event in {}", data.clazz().getClassName());
+                    LOGGER.error(Logging.LOADING, "Error when register event in {}." , data.clazz().getClassName());
                 }
                 catch (ClassNotFoundException e) {
-                    LOGGER.fatal(Logging.LOADING, "Failed to load mod class {} for @EventBusSubscriber annotation", data.clazz(), e);
-                    throw new RuntimeException(e);
+                    LOGGER.error(Logging.LOADING, "Failed to load mod class {} for @EventBusSubscriber annotation", data.clazz(), e);
+                }
+                catch (NoClassDefFoundError e) {
+                    LOGGER.error(Logging.LOADING, "Class {} was not found", data.clazz(), e);
                 }
             }
         }
