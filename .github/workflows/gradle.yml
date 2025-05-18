@@ -54,16 +54,13 @@ jobs:
       - name: Sign jars
         env:
           SIGNING_KEY: ${{ secrets.LOUNODE_SIGN_KEY }}
-          SIGNING_PASSPHRASE: ${{ secrets.LOUNODE_SIGN_PASSPHRASE }}
-        if: ${{ env.SIGNING_KEY != '' && env.SIGNING_PASSPHRASE != '' }}
+        if: ${{ env.SIGNING_KEY != '' }}
         run: |
-          echo "${SIGNING_KEY}" | gpg --batch --passphrase "${SIGNING_PASSPHRASE}" --import -
-          gpg --local-user "lounode (gpg) <lounode@gmail.com>" --armor \
+          echo "${SIGNING_KEY}" | gpg --import -
+          gpg --local-user "lounode" --armor \
             --detach-sign ${{ steps.calculate_artifact_names.outputs.forge }}
-          gpg --local-user "lounode (gpg) <lounode@gmail.com>" --armor \
+          gpg --local-user "lounode" --armor \
             --detach-sign ${{ steps.calculate_artifact_names.outputs.fabric }}
-          gpg --local-user "lounode (gpg) <lounode@gmail.com>" --armor \
-            --detach-sign ${{ steps.calculate_artifact_names.outputs.gog }}
 
       - name: Archive Fabric Artifacts
         uses: actions/upload-artifact@v4
