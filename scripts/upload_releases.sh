@@ -7,8 +7,8 @@ TAGNAME="${GIT_REF/#refs\/tags\/}"
 # Remove 'release-' from front
 VERSION="${TAGNAME/#release-}"
 MC_VERSION=$(echo "${VERSION}" | cut -d '-' -f 1)
-CHANGELOG_FRAGMENT=$(echo "${VERSION}" | tr . -)
-CHANGELOG_LINK="https://botaniamod.net/changelog.html#${CHANGELOG_FRAGMENT}-fake"
+#CHANGELOG_FRAGMENT=$(echo "${VERSION}" | tr . -)
+CHANGELOG_LINK="See https://github.com/Lounode/EventWrapper/commits/1.20.1/"
 
 function release_github() {
 	echo >&2 'Creating GitHub Release'
@@ -36,20 +36,12 @@ function release_modrinth() {
 		{
 			"project_id": "P7dR8mSH",
 			"dependency_type": "required"
-		},
-		{
-			"project_id": "nU0bVIaL",
-			"dependency_type": "required"
-		},
-		{
-			"project_id": "5aaWibi9",
-			"dependency_type": "required"
 		}
 	],
 	"version_type": "release",
 	"loaders": ["fabric", "quilt"],
 	"featured": false,
-	"project_id": "pfjLUfGv",
+	"project_id": "k7JPYdTv",
 	"file_parts": [
 		"jar"
 	],
@@ -72,20 +64,11 @@ EOF
 	local MODRINTH_FORGE_SPEC
 	MODRINTH_FORGE_SPEC=$(cat <<EOF
 {
-	"dependencies": [
-		{
-			"project_id": "nU0bVIaL",
-			"dependency_type": "required"
-		},
-		{
-			"project_id": "vvuO3ImH",
-			"dependency_type": "required"
-		}
-	],
+	"dependencies": [],
 	"version_type": "release",
 	"loaders": ["forge"],
 	"featured": false,
-	"project_id": "pfjLUfGv",
+	"project_id": "k7JPYdTv",
 	"file_parts": [
 		"jar"
 	],
@@ -137,14 +120,6 @@ function release_curseforge() {
 			{
 				"slug": "fabric-api",
 				"type": "requiredDependency"
-			},
-			{
-				"slug": "patchouli",
-				"type": "requiredDependency"
-			},
-			{
-				"slug": "trinkets",
-				"type": "requiredDependency"
 			}
 		]
 	}
@@ -163,7 +138,7 @@ $CURSEFORGE_GAME_VERSION]"
 								 jq --arg changelog "$CHANGELOG_LINK" \
 									--argjson gamevers "$CURSEFORGE_FABRIC_GAMEVERS" \
 									'.gameVersions=$ARGS.named.gamevers | .changelog=$ARGS.named.changelog')
-	curl 'https://minecraft.curseforge.com/api/projects/421839/upload-file' \
+	curl 'https://minecraft.curseforge.com/api/projects/1256971/upload-file' \
 		 -H "X-Api-Token: $CURSEFORGE_TOKEN" \
 		 -F "metadata=$CURSEFORGE_FABRIC_SPEC" \
 		 -F "file=@$FABRIC_JAR"
@@ -176,16 +151,7 @@ $CURSEFORGE_GAME_VERSION]"
     "changelogType": "text",
     "releaseType": "release",
 	"relations": {
-		"projects": [
-			{
-				"slug": "patchouli",
-				"type": "requiredDependency"
-			},
-			{
-				"slug": "curios",
-				"type": "requiredDependency"
-			}
-		]
+		"projects": []
 	}
 }
 EOF
@@ -202,7 +168,7 @@ $CURSEFORGE_GAME_VERSION]"
 								jq --arg changelog "$CHANGELOG_LINK" \
 								   --argjson gamevers "$CURSEFORGE_FORGE_GAMEVERS" \
 								   '.gameVersions=$ARGS.named.gamevers | .changelog=$ARGS.named.changelog')
-	curl 'https://minecraft.curseforge.com/api/projects/225643/upload-file' \
+	curl 'https://minecraft.curseforge.com/api/projects/1256971/upload-file' \
 		 -H "X-Api-Token: $CURSEFORGE_TOKEN" \
 		 -F "metadata=$CURSEFORGE_FORGE_SPEC" \
 		 -F "file=@$FORGE_JAR"
