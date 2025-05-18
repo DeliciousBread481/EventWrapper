@@ -37,7 +37,7 @@ subprojects {
     }
 
     jar {
-        from "LICENSE"
+        //from "LICENSE"
 
         exclude "**/*.bat"
         exclude "**/*.psd"
