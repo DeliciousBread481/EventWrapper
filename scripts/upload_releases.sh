@@ -149,10 +149,7 @@ $CURSEFORGE_GAME_VERSION]"
 	CURSEFORGE_FORGE_SPEC=$(cat <<EOF
 {
     "changelogType": "text",
-    "releaseType": "release",
-	"relations": {
-		"projects": []
-	}
+    "releaseType": "release"
 }
 EOF
 						 )
