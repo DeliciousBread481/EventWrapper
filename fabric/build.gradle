@@ -3,11 +3,68 @@ plugins {
     id 'maven-publish'
 }
 
-base.archivesName = mod_id + "-" + "fabric"
+archivesBaseName =  mod_id + "-" + archivesBaseName
 version = "${minecraft_version}-${mod_version}"
 
-if (System.getenv().RELEASE_MODE == null) {
+if (System.getenv().RELEASE_MODE != "1") {
     version += '-SNAPSHOT'
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/eventwrapper.accesswidener")
+    mixin.defaultRefmapName = "eventwrapper.refmap.json"
+
+
+    runs {
+        client{
+            programArgs(["--username", "Dev", "--uuid", "4f201c25-b473-4c2c-959a-dea681f79c23"])
+            vmArg "-DdebugEvent=true"
+        }
+
+        gameTest {
+            server()
+            vmArg "-Dfabric-api.gametest=1"
+        }
+        /*
+
+        commonDatagen {
+            client()
+            vmArg "-Deventwrapper.common_datagen=1"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.modid=eventwrapper"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("../common/src/generated/resources")}"
+        }
+
+        fabricDatagen {
+            client()
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.modid=eventwrapper"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
+        }
+        */
+        configureEach {
+            runDir "../run"
+            ideConfigGenerated(true)
+            vmArg "-XX:+AllowEnhancedClassRedefinition"
+        }
+    }
+
+    mods {
+        eventwrapper {
+            sourceSet(sourceSets.main)
+            sourceSet project(":common").sourceSets.main
+        }
+    }
+}
+
+
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
+sourceSets.main.java {
+    exclude 'io/github/lounode/eventwrapper/forge/**'
 }
 
 repositories {
@@ -33,14 +90,14 @@ repositories {
         url = "https://mod-buildcraft.com/maven"
     }
     maven {
-        name = "entity reach"
-        url = "https://maven.jamieswhiteshirt.com/libs-release/"
+        name "entity reach"
+        url "https://maven.jamieswhiteshirt.com/libs-release/"
     }
     maven {
-        url = "https://jitpack.io" // for step height eam
+        url "https://jitpack.io" // for step height eam
     }
     maven {
-        url = "https://maven.shedaniel.me/" // for rei
+        url "https://maven.shedaniel.me/" // for rei
     }
     maven {
         name = "ParchmentMC"
@@ -48,7 +105,7 @@ repositories {
     }
     maven {
         name = "Unascribed"
-        url = "https://repo.unascribed.com" // for ears
+        url "https://repo.unascribed.com" // for ears
         content {
             includeGroup "com.unascribed"
         }
@@ -64,71 +121,45 @@ repositories {
         name = "Forge"
         url = "https://maven.minecraftforge.net"
     }
-}
 
-loom {
-    accessWidenerPath = file("src/main/resources/eventwrapper.accesswidener")
-    mixin.defaultRefmapName = "eventwrapper.refmap.json"
 
-    runs {
-        client{
-            vmArg "-DdebugEvent=true"
-            vmArg "-XX:+AllowEnhancedClassRedefinition"
-        }
-
-        gameTest {
-            server()
-            vmArg "-DdebugEvent=true"
-            vmArg "-Dfabric-api.gametest=1"
-        }
-
-        configureEach {
-            runDir "../run/"
-            ideConfigGenerated(true)
-
-            programArgs.addAll("--username", "Dev")
-            programArgs.addAll("--uuid", "4f201c25-b473-4c2c-959a-dea681f79c23")
-        }
-    }
-
-    mods {
-        eventwrapper {
-            sourceSet(sourceSets.main)
-            sourceSet project(":common").sourceSets.main
-        }
-    }
 }
 
 dependencies {
     implementation project(":common")
+
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${minecraft_version}:${mapping_version}@zip")
+        parchment("org.parchmentmc.data:parchment-1.20.1:2023.09.03@zip")
     }
-    compileOnly "net.minecraftforge:forge:${minecraft_version}-${forge_version}:universal"
-    compileOnly "net.minecraftforge:eventbus:6.0.3"
 
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
-    modRuntimeOnly "mezz.jei:jei-${minecraft_version}-fabric:${jei_version}"
-    modRuntimeOnly "com.terraformersmc:modmenu:7.2.2"
+    modRuntimeOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+    modImplementation "com.terraformersmc:modmenu:7.2.2"
 
-    //compileOnly "com.demonwav.mcdev:annotations:1.0" // only to shut up compile warnings from CCA's usage of CheckEnv and Env
+    //Libs
+    //modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.2.1"
+    //modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.2.1"
+
+    compileOnly "com.demonwav.mcdev:annotations:1.0" // only to shut up compile warnings from CCA's usage of CheckEnv and Env
+    compileOnly "com.google.code.findbugs:jsr305:3.0.2"
+    compileOnly "net.minecraftforge:forge:${minecraft_version}-${forge_version}:universal"
+    compileOnly "net.minecraftforge:eventbus:6.0.3"
+
+    testImplementation "net.fabricmc:fabric-loader-junit:${fabric_loader_version}"
 }
 
-sourceSets.main.resources {
-    srcDir 'src/generated/resources'
-}
-
-sourceSets.main.java {
-    exclude 'io/github/lounode/eventwrapper/forge/**'
+test {
+    useJUnitPlatform()
 }
 
 compileJava {
     source(project(":common").sourceSets.main.allSource)
-    options.compilerArgs << "-Xlint:all,-classfile,-processing,-deprecation,-serial" << "-Werror"
+    options.compilerArgs << "-Xlint:all,-classfile,-processing,-deprecation,-serial"
+
 }
 
 sourcesJar {
@@ -154,6 +185,7 @@ def generateModMetadataFabric = tasks.register('generateModMetadataFabric', Proc
     inputs.properties replaceProperties
     expand replaceProperties
 
+
     from "src/main/template"
     into "build/generated/sources/modMetaData"
 }
@@ -170,10 +202,13 @@ afterEvaluate {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId = mod_group_id
-            artifactId = base.archivesName.get()
-            version = project.version
+            groupId mod_group_id
+            artifactId project.archivesBaseName
+            version project.version
             from components.java
+
+            //println "将发布到: ${groupId}:${artifactId}:${version}"
+            //println "本地仓库路径: ${System.properties['user.home']}/.m2/repository"
         }
     }
 

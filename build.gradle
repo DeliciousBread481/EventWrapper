@@ -8,7 +8,7 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'maven-publish'
     apply plugin: 'pmd'
-    apply plugin: "com.diffplug.spotless"
+    //apply plugin: "com.diffplug.spotless"
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
     java.withSourcesJar()
@@ -37,7 +37,7 @@ subprojects {
     }
 
     jar {
-        //from "LICENSE"
+        from "LICENSE"
 
         exclude "**/*.bat"
         exclude "**/*.psd"
@@ -47,7 +47,7 @@ subprojects {
 
         exclude ".cache"
     }
-
+    /*
     spotless {
         enforceCheck = false // workaround around jenkins having wrong line endings in some files
         // we explicitly check in github actions builds
@@ -58,4 +58,5 @@ subprojects {
             importOrderFile rootProject.file('spotless/eclipse.importorder')
         }
     }
+    */
 }

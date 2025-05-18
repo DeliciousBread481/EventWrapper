@@ -1,14 +1,42 @@
 plugins {
-    id 'java'
+    id('java')
     id 'net.neoforged.moddev.legacyforge' version '2.0.78'
+    //id 'fabric-loom' version '1.10-SNAPSHOT'
 }
 
-base.archivesName = mod_id + "-" + "common"
+archivesBaseName =  mod_id + "-" + archivesBaseName
 version = "${minecraft_version}-${mod_version}"
 if (System.getenv().RELEASE_MODE == null) {
     version += '-SNAPSHOT'
 }
 
+legacyForge {
+    version = minecraft_version + "-" + forge_version
+    //mcpVersion = "1.20.1"
+    accessTransformers = [file('src/main/resources/META-INF/accesstransformer.cfg')]
+
+    parchment {
+        minecraftVersion = minecraft_version
+        mappingsVersion = mapping_version
+    }
+}
+
+/*
+loom {
+    //accessWidenerPath = file("src/main/resources/eventwrapper.accesswidener")
+    mixin.defaultRefmapName = "eventwrapper.refmap.json"
+
+
+    runs {
+        configureEach {
+            runDir "../run"
+            ideConfigGenerated(true)
+            vmArg "-XX:+AllowEnhancedClassRedefinition"
+        }
+    }
+}
+
+ */
 repositories {
     mavenLocal()
     maven {
@@ -21,38 +49,43 @@ repositories {
     }
     maven {
         name = "Unascribed"
-        url = "https://repo.unascribed.com" // for ears
+        url "https://repo.unascribed.com" // for ears
         content {
             includeGroup "com.unascribed"
         }
     }
-    maven {
-        name = "Forge"
-        url = "https://maven.minecraftforge.net"
+    repositories {
+        maven {
+            name = "Forge"
+            url = "https://maven.minecraftforge.net"
+        }
     }
 }
-
-legacyForge {
-    version = minecraft_version + "-" + forge_version
-    accessTransformers = [file('src/main/resources/META-INF/accesstransformer.cfg')]
-
-    parchment {
-        minecraftVersion = minecraft_version
-        mappingsVersion = mapping_version
-    }
-}
-
 
 dependencies {
+    /*
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.20.1:2023.09.03@zip")
+    }
+    */
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
-    compileOnly "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
-
-    api "com.demonwav.mcdev:annotations:2.1.0"
-    api 'org.jetbrains:annotations:24.0.1'
-    api "com.google.code.findbugs:jsr305:3.0.2"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.1'
+
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+
+    implementation "com.demonwav.mcdev:annotations:2.1.0"
+    compileOnly 'org.jetbrains:annotations:24.0.1'
+    compileOnly "com.google.code.findbugs:jsr305:3.0.2"
+
+    compileOnly "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+
+    //compileOnly "net.minecraftforge:forge:${minecraft_version}-${forge_version}:universal"
+    //compileOnly "net.minecraftforge:eventbus:6.0.3"
+    //implementation fileTree(dir: "${rootDir}/lib", include: ['*.jar'])
 }
 
 test {
@@ -64,7 +97,6 @@ sourceSets.main.resources {
 }
 
 sourceSets.main.java {
-    // Exclude test
     exclude 'io/github/lounode/eventwrapper/test/**'
 }
 
@@ -73,13 +105,35 @@ processResources {
     exclude '.cache'
 }
 
+def generateModMetadataXplat = tasks.register('generateModMetadataXplat', ProcessResources) {
+    var replaceProperties = [
+            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+            forge_version: forge_version, forge_version_range: forge_version_range,
+            loader_version_range: loader_version_range,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors: mod_authors, mod_description: mod_description,
+            jei_version: jei_version, jei_version_range: jei_version_range,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+
+    from "src/main/template"
+    into "build/generated/sources/modMetadata"
+}
+
+sourceSets.main.resources.srcDir generateModMetadataXplat
+//legacyForge.ideSyncTask generateModMetadataXplat
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId = mod_group_id
-            artifactId = base.archivesName.get()
-            version = project.version
+            groupId mod_group_id
+            artifactId project.archivesBaseName
+            version project.version
             from components.java
+
+            //println "将发布到: ${groupId}:${artifactId}:${version}"
+            //println "本地仓库路径: ${System.properties['user.home']}/.m2/repository"
         }
     }
     repositories {
