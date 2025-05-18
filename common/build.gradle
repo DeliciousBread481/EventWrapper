@@ -42,8 +42,6 @@ legacyForge {
     }
 }
 
-
-
 dependencies {
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
     compileOnly "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
