@@ -14,23 +14,21 @@ import net.minecraftforge.eventbus.api.Event;
  *
  * @author cpw
  */
-public class ServerStartingEventWrapper extends ServerLifecycleEventWrapper
-{
-    public ServerStartingEventWrapper(final MinecraftServer server)
-    {
-        super(server);
-    }
+public class ServerStartingEventWrapper extends ServerLifecycleEventWrapper {
+	public ServerStartingEventWrapper(final MinecraftServer server) {
+		super(server);
+	}
 
-    public ServerStartingEventWrapper(ServerStartingEvent event) {
-        this(event.getServer());
-    }
+	public ServerStartingEventWrapper(ServerStartingEvent event) {
+		this(event.getServer());
+	}
 
-    public static Class<? extends Event> getForgeClass() {
-        return ServerStartingEvent.class;
-    }
+	public static Class<? extends Event> getForgeClass() {
+		return ServerStartingEvent.class;
+	}
 
-    @Override
-    public Object toForgeEvent() {
-        return new ServerStartingEvent(getServer());
-    }
+	@Override
+	public Object toForgeEvent() {
+		return new ServerStartingEvent(getServer());
+	}
 }

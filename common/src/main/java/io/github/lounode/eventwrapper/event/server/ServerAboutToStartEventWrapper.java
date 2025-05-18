@@ -11,25 +11,25 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
  * server, and after the player has hit "Play Selected World" in the client. Called before {@link ServerStartingEvent}.
  *
  * You can obtain a reference to the server with this event.
+ * 
  * @author cpw
  */
 public class ServerAboutToStartEventWrapper extends ServerLifecycleEventWrapper {
 
-    public ServerAboutToStartEventWrapper(MinecraftServer server)
-    {
-        super(server);
-    }
+	public ServerAboutToStartEventWrapper(MinecraftServer server) {
+		super(server);
+	}
 
-    public ServerAboutToStartEventWrapper(ServerAboutToStartEvent event) {
-        this(event.getServer());
-    }
+	public ServerAboutToStartEventWrapper(ServerAboutToStartEvent event) {
+		this(event.getServer());
+	}
 
-    public static Class<? extends Event> getForgeClass() {
-        return ServerAboutToStartEvent.class;
-    }
+	public static Class<? extends Event> getForgeClass() {
+		return ServerAboutToStartEvent.class;
+	}
 
-    @Override
-    public Object toForgeEvent() {
-        return new ServerAboutToStartEvent(getServer());
-    }
+	@Override
+	public Object toForgeEvent() {
+		return new ServerAboutToStartEvent(getServer());
+	}
 }

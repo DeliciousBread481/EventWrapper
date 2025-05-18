@@ -1,31 +1,34 @@
 package io.github.lounode.eventwrapper.fabric.mixin.eventposter.entity.living;
 
-import io.github.lounode.eventwrapper.EventsWrapper;
-import io.github.lounode.eventwrapper.event.entity.living.LivingHurtEventWrapper;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+
+import io.github.lounode.eventwrapper.EventsWrapper;
+import io.github.lounode.eventwrapper.event.entity.living.LivingHurtEventWrapper;
+
 @Mixin(Player.class)
 public class LivingHurtEventPosterPlayer {
 
-    @ModifyVariable(
-            method = "actuallyHurt",
-            at = @At("HEAD"),
-            argsOnly = true,
-            ordinal = 0
-    )
-    private float modifyIncomingDamage(float originalDamage, DamageSource damageSource) {
-        LivingHurtEventWrapper event = new LivingHurtEventWrapper((Player) (Object) this, damageSource, originalDamage);
+	@ModifyVariable(
+		method = "actuallyHurt",
+		at = @At("HEAD"),
+		argsOnly = true,
+		ordinal = 0
+	)
+	private float modifyIncomingDamage(float originalDamage, DamageSource damageSource) {
+		LivingHurtEventWrapper event = new LivingHurtEventWrapper((Player) (Object) this, damageSource, originalDamage);
 
-        EventsWrapper.post(event);
+		EventsWrapper.post(event);
 
-        if (event.isCanceled()) {
-            return 0;
-        }
+		if (event.isCanceled()) {
+			return 0;
+		}
 
-        return event.getAmount();
-    }
+		return event.getAmount();
+	}
 }

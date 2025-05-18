@@ -1,16 +1,16 @@
 package io.github.lounode.eventwrapper.eventbus.api;
 
 public enum Dist {
-    CLIENT,
-    DEDICATED_SERVER;
+	CLIENT,
+	DEDICATED_SERVER;
 
-    Dist() {}
+	Dist() {}
 
-    public boolean isDedicatedServer() {
-        return !this.isClient();
-    }
+	public boolean isDedicatedServer() {
+		return !this.isClient();
+	}
 
-    public boolean isClient() {
-        return this == CLIENT;
-    }
+	public boolean isClient() {
+		return this == CLIENT;
+	}
 }

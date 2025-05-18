@@ -5,14 +5,14 @@ import net.minecraft.world.item.Item;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
 public class ItemCooldownFinishEvent extends PlayerEvent {
-    private final Item item;
+	private final Item item;
 
-    public ItemCooldownFinishEvent(Player player, Item item) {
-        super(player);
-        this.item = item;
-    }
+	public ItemCooldownFinishEvent(Player player, Item item) {
+		super(player);
+		this.item = item;
+	}
 
-    public Item getItem() {
-        return item;
-    }
+	public Item getItem() {
+		return item;
+	}
 }

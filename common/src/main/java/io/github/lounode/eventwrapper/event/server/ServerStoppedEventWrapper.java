@@ -13,21 +13,20 @@ import net.minecraftforge.eventbus.api.Event;
  * @author cpw
  */
 public class ServerStoppedEventWrapper extends ServerLifecycleEventWrapper {
-    public ServerStoppedEventWrapper(MinecraftServer server)
-    {
-        super(server);
-    }
+	public ServerStoppedEventWrapper(MinecraftServer server) {
+		super(server);
+	}
 
-    public ServerStoppedEventWrapper(ServerStoppedEvent event) {
-        this(event.getServer());
-    }
+	public ServerStoppedEventWrapper(ServerStoppedEvent event) {
+		this(event.getServer());
+	}
 
-    public static Class<? extends Event> getForgeClass() {
-        return ServerStoppedEvent.class;
-    }
+	public static Class<? extends Event> getForgeClass() {
+		return ServerStoppedEvent.class;
+	}
 
-    @Override
-    public Object toForgeEvent() {
-        return new ServerStoppedEvent(getServer());
-    }
+	@Override
+	public Object toForgeEvent() {
+		return new ServerStoppedEvent(getServer());
+	}
 }

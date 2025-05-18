@@ -1,7 +1,5 @@
 package io.github.lounode.eventwrapper.event.furnace;
 
-import io.github.lounode.eventwrapper.eventbus.api.Cancelable;
-import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -9,7 +7,12 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.eventbus.api.Event;
+
 import org.jetbrains.annotations.Nullable;
+
+
+import io.github.lounode.eventwrapper.eventbus.api.Cancelable;
+import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
 
 /**
  * {@link FurnaceFuelBurnTimeEventWrapper} is fired when determining the fuel value for an ItemStack. <br>
@@ -26,68 +29,62 @@ import org.jetbrains.annotations.Nullable;
  **/
 @Cancelable
 public class FurnaceFuelBurnTimeEventWrapper extends EventWrapper {
-    private final ItemStack itemStack;
-    @Nullable
-    private final RecipeType<?> recipeType;
-    private int burnTime;
+	private final ItemStack itemStack;
+	@Nullable
+	private final RecipeType<?> recipeType;
+	private int burnTime;
 
-    public FurnaceFuelBurnTimeEventWrapper(ItemStack itemStack, int burnTime, @Nullable RecipeType<?> recipeType)
-    {
-        this.itemStack = itemStack;
-        this.burnTime = burnTime;
-        this.recipeType = recipeType;
-    }
+	public FurnaceFuelBurnTimeEventWrapper(ItemStack itemStack, int burnTime, @Nullable RecipeType<?> recipeType) {
+		this.itemStack = itemStack;
+		this.burnTime = burnTime;
+		this.recipeType = recipeType;
+	}
 
-    /**
-     * Get the ItemStack "fuel" in question.
-     */
-    public ItemStack getItemStack()
-    {
-        return itemStack;
-    }
+	/**
+	 * Get the ItemStack "fuel" in question.
+	 */
+	public ItemStack getItemStack() {
+		return itemStack;
+	}
 
-    /**
-     *
-     * Get the recipe type for which to obtain the burn time, if known.
-     */
-    @Nullable
-    public RecipeType<?> getRecipeType()
-    {
-        return recipeType;
-    }
+	/**
+	 *
+	 * Get the recipe type for which to obtain the burn time, if known.
+	 */
+	@Nullable
+	public RecipeType<?> getRecipeType() {
+		return recipeType;
+	}
 
-    /**
-     * Set the burn time for the given ItemStack.
-     * Setting it to 0 will prevent the item from being used as fuel, overriding vanilla's decision.
-     */
-    public void setBurnTime(int burnTime)
-    {
-        if (burnTime >= 0)
-        {
-            this.burnTime = burnTime;
-            setCanceled(true);
-        }
-    }
+	/**
+	 * Set the burn time for the given ItemStack.
+	 * Setting it to 0 will prevent the item from being used as fuel, overriding vanilla's decision.
+	 */
+	public void setBurnTime(int burnTime) {
+		if (burnTime >= 0) {
+			this.burnTime = burnTime;
+			setCanceled(true);
+		}
+	}
 
-    /**
-     * The resulting value of this event, the burn time for the ItemStack.
-     * A value of 0 will prevent the item from being used as fuel, overriding vanilla's decision.
-     */
-    public int getBurnTime()
-    {
-        return burnTime;
-    }
+	/**
+	 * The resulting value of this event, the burn time for the ItemStack.
+	 * A value of 0 will prevent the item from being used as fuel, overriding vanilla's decision.
+	 */
+	public int getBurnTime() {
+		return burnTime;
+	}
 
-    public FurnaceFuelBurnTimeEventWrapper(FurnaceFuelBurnTimeEvent event) {
-        this(event.getItemStack(), event.getBurnTime(), event.getRecipeType());
-    }
+	public FurnaceFuelBurnTimeEventWrapper(FurnaceFuelBurnTimeEvent event) {
+		this(event.getItemStack(), event.getBurnTime(), event.getRecipeType());
+	}
 
-    public static Class<? extends Event> getForgeClass() {
-        return FurnaceFuelBurnTimeEvent.class;
-    }
+	public static Class<? extends Event> getForgeClass() {
+		return FurnaceFuelBurnTimeEvent.class;
+	}
 
-    @Override
-    public Object toForgeEvent() {
-        return new FurnaceFuelBurnTimeEvent(getItemStack(), getBurnTime(), getRecipeType());
-    }
+	@Override
+	public Object toForgeEvent() {
+		return new FurnaceFuelBurnTimeEvent(getItemStack(), getBurnTime(), getRecipeType());
+	}
 }

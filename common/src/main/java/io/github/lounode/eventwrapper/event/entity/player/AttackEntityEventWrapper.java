@@ -1,12 +1,13 @@
 package io.github.lounode.eventwrapper.event.entity.player;
 
-import io.github.lounode.eventwrapper.eventbus.api.Cancelable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.Event;
 
+
+import io.github.lounode.eventwrapper.eventbus.api.Cancelable;
 
 /**
  * AttackEntityEvent is fired when a player attacks an Entity.<br>
@@ -24,28 +25,27 @@ import net.minecraftforge.eventbus.api.Event;
  **/
 @Cancelable
 public class AttackEntityEventWrapper extends PlayerEventWrapper {
-    private final Entity target;
-    public AttackEntityEventWrapper(Player player, Entity target)
-    {
-        super(player);
-        this.target = target;
-    }
+	private final Entity target;
 
-    public Entity getTarget()
-    {
-        return target;
-    }
+	public AttackEntityEventWrapper(Player player, Entity target) {
+		super(player);
+		this.target = target;
+	}
 
-    public AttackEntityEventWrapper(AttackEntityEvent event) {
-        this(event.getEntity(), event.getTarget());
-    }
+	public Entity getTarget() {
+		return target;
+	}
 
-    public static Class<? extends Event> getForgeClass() {
-        return AttackEntityEvent.class;
-    }
+	public AttackEntityEventWrapper(AttackEntityEvent event) {
+		this(event.getEntity(), event.getTarget());
+	}
 
-    @Override
-    public Object toForgeEvent() {
-        return new AttackEntityEvent(getEntity(), getTarget());
-    }
+	public static Class<? extends Event> getForgeClass() {
+		return AttackEntityEvent.class;
+	}
+
+	@Override
+	public Object toForgeEvent() {
+		return new AttackEntityEvent(getEntity(), getTarget());
+	}
 }

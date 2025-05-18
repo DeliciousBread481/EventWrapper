@@ -1,11 +1,13 @@
 package io.github.lounode.eventwrapper.event.entity.living;
 
-import io.github.lounode.eventwrapper.eventbus.api.Cancelable;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.Event;
+
+
+import io.github.lounode.eventwrapper.eventbus.api.Cancelable;
 
 /**
  * LivingHealEvent is fired when an Entity is set to be healed. <br>
@@ -24,31 +26,31 @@ import net.minecraftforge.eventbus.api.Event;
  **/
 @Cancelable
 public class LivingHealEventWrapper extends LivingEventWrapper {
-    private float amount;
+	private float amount;
 
-    public LivingHealEventWrapper(LivingEntity livingEntity, float amount) {
-        super(livingEntity);
-        this.amount = amount;
-    }
+	public LivingHealEventWrapper(LivingEntity livingEntity, float amount) {
+		super(livingEntity);
+		this.amount = amount;
+	}
 
-    public LivingHealEventWrapper(LivingHealEvent event) {
-        this(event.getEntity(), event.getAmount());
-    }
+	public LivingHealEventWrapper(LivingHealEvent event) {
+		this(event.getEntity(), event.getAmount());
+	}
 
-    public float getAmount() {
-        return amount;
-    }
+	public float getAmount() {
+		return amount;
+	}
 
-    public void setAmount(float amount) {
-        this.amount = amount;
-    }
+	public void setAmount(float amount) {
+		this.amount = amount;
+	}
 
-    public static Class<? extends Event> getForgeClass() {
-        return LivingHealEvent.class;
-    }
+	public static Class<? extends Event> getForgeClass() {
+		return LivingHealEvent.class;
+	}
 
-    @Override
-    public Object toForgeEvent() {
-        return new LivingHealEvent(getEntity(), getAmount());
-    }
+	@Override
+	public Object toForgeEvent() {
+		return new LivingHealEvent(getEntity(), getAmount());
+	}
 }

@@ -1,7 +1,5 @@
 package io.github.lounode.eventwrapper.event.entity.player;
 
-
-import io.github.lounode.eventwrapper.event.entity.living.LivingEventWrapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -19,12 +17,14 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Optional;
 
+import io.github.lounode.eventwrapper.event.entity.living.LivingEventWrapper;
 
 /**
  * PlayerEvent is fired whenever an event involving a {@link Player} occurs. <br>
@@ -34,740 +34,726 @@ import java.util.Optional;
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 public abstract class PlayerEventWrapper extends LivingEventWrapper {
-    private final Player player;
-
-    public PlayerEventWrapper(Player player)
-    {
-        super(player);
-        this.player = player;
-    }
-
-    public PlayerEventWrapper(PlayerEvent event) {
-        this(event.getEntity());
-    }
-
-    @Override
-    public Player getEntity()
-    {
-        return player;
-    }
-
-    public static Class<? extends Event> getForgeClass() {
-        return PlayerEvent.class;
-    }
-
-    /**
-     * HarvestCheck is fired when a player attempts to harvest a block.<br>
-     * This event is fired whenever a player attempts to harvest a block in
-     * {@link Player#hasCorrectToolForDrops(BlockState)}.<br>
-     * <br>
-     * This event is fired via the {@link ForgeEventFactory#doPlayerHarvestCheck(Player, BlockState, boolean)}.<br>
-     * <br>
-     * {@link #state} contains the {@link BlockState} that is being checked for harvesting. <br>
-     * {@link #success} contains the boolean value for whether the Block will be successfully harvested. <br>
-     * <br>
-     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
-     * <br>
-     * This event does not have a result. {@link HasResult}<br>
-     * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
-     **/
-    public static class HarvestCheck extends PlayerEventWrapper
-    {
-        private final BlockState state;
-        private boolean success;
-
-        public HarvestCheck(Player player, BlockState state, boolean success)
-        {
-            super(player);
-            this.state = state;
-            this.success = success;
-        }
-
-        public HarvestCheck(PlayerEvent.HarvestCheck event) {
-            this(event.getEntity(), event.getTargetBlock(), event.canHarvest());
-        }
-
-        public BlockState getTargetBlock() { return this.state; }
-        public boolean canHarvest() { return this.success; }
-        public void setCanHarvest(boolean success){ this.success = success; }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.HarvestCheck.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.HarvestCheck(getEntity(), getTargetBlock(), canHarvest());
-        }
-    }
-
-    /**
-     * BreakSpeed is fired when a player attempts to harvest a block.<br>
-     * This event is fired whenever a player attempts to harvest a block in
-     * {@link Player#getDigSpeed(BlockState, BlockPos)}.<br>
-     * <br>
-     * This event is fired via the {@link ForgeEventFactory#getBreakSpeed(Player, BlockState, float, BlockPos)}.<br>
-     * <br>
-     * {@link #state} contains the block being broken. <br>
-     * {@link #originalSpeed} contains the original speed at which the player broke the block. <br>
-     * {@link #newSpeed} contains the newSpeed at which the player will break the block. <br>
-     * {@link #pos} contains the coordinates at which this event is occurring. Optional value.<br>
-     * <br>
-     * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
-     * If it is canceled, the player is unable to break the block.<br>
-     * <br>
-     * This event does not have a result. {@link HasResult}<br>
-     * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
-     **/
-    @Cancelable
-    public static class BreakSpeed extends PlayerEventWrapper
-    {
-        private static final BlockPos LEGACY_UNKNOWN = new BlockPos(0, -114514, 0);
-        private final BlockState state;
-        private final float originalSpeed;
-        private float newSpeed = 0.0f;
-        private final Optional<BlockPos> pos; // Y position of -114514 notes unknown location
-
-        public BreakSpeed(Player player, BlockState state, float original, @Nullable BlockPos pos)
-        {
-            super(player);
-            this.state = state;
-            this.originalSpeed = original;
-            this.setNewSpeed(original);
-            this.pos = Optional.ofNullable(pos);
-        }
-
-        public BreakSpeed(PlayerEvent.BreakSpeed event) {
-            this(event.getEntity(), event.getState(), event.getOriginalSpeed(), event.getPosition().isPresent() ? event.getPosition().get() : null);
-        }
-
-        public BlockState getState() { return state; }
-        public float getOriginalSpeed() { return originalSpeed; }
-        public float getNewSpeed() { return newSpeed; }
-        public void setNewSpeed(float newSpeed) { this.newSpeed = newSpeed; }
-        public Optional<BlockPos> getPosition() { return this.pos; }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.BreakSpeed.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.BreakSpeed(getEntity(), getState(), getOriginalSpeed(), getPosition().isPresent() ? getPosition().get() : null);
-        }
-    }
-
-    /**
-     * NameFormat is fired when a player's display name is retrieved.<br>
-     * This event is fired whenever a player's name is retrieved in
-     * {@link Player#getDisplayName()} or {@link Player#refreshDisplayName()}.<br>
-     * <br>
-     * This event is fired via the {@link ForgeEventFactory#getPlayerDisplayName(Player, Component)}.<br>
-     * <br>
-     * {@link #username} contains the username of the player.
-     * {@link #displayname} contains the display name of the player.
-     * <br>
-     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
-     * <br>
-     * This event does not have a result. {@link HasResult}
-     * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
-     **/
-    public static class NameFormat extends PlayerEventWrapper
-    {
-        private final Component username;
-        private Component displayname;
-
-        public NameFormat(Player player, Component username)
-        {
-            super(player);
-            this.username = username;
-            this.setDisplayname(username);
-        }
-
-        public NameFormat(PlayerEvent.NameFormat event) {
-            this(event.getEntity(), event.getUsername());
-        }
-
-        public Component getUsername()
-        {
-            return username;
-        }
-
-        public Component getDisplayname()
-        {
-            return displayname;
-        }
-
-        public void setDisplayname(Component displayname)
-        {
-            this.displayname = displayname;
-        }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.NameFormat.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.NameFormat(getEntity(), getUsername());
-        }
-    }
-
-    /**
-     * TabListNameFormat is fired when a player's display name for the tablist is retrieved.<br>
-     * This event is fired whenever a player's display name for the tablist is retrieved in
-     * {@link ServerPlayer#getTabListDisplayName()} or {@link ServerPlayer#refreshTabListName()}.<br>
-     * <br>
-     * This event is fired via the {@link ForgeEventFactory#getPlayerTabListDisplayName(Player)}.<br>
-     * <br>
-     * {@link #getDisplayName()} contains the display name of the player or null if the client should determine the display name itself.
-     * <br>
-     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
-     * <br>
-     * This event does not have a result. {@link HasResult}
-     * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
-     **/
-    public static class TabListNameFormat extends PlayerEventWrapper
-    {
-        @Nullable
-        private Component displayName;
-
-        public TabListNameFormat(Player player)
-        {
-            super(player);
-        }
-
-        public TabListNameFormat(PlayerEvent.TabListNameFormat event) {
-            this(event.getEntity());
-        }
-
-        @Nullable
-        public Component getDisplayName()
-        {
-            return displayName;
-        }
-
-        public void setDisplayName(@Nullable Component displayName)
-        {
-            this.displayName = displayName;
-        }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.TabListNameFormat.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.TabListNameFormat(getEntity());
-        }
-    }
-
-    /**
-     * Fired when the EntityPlayer is cloned, typically caused by the impl sending a RESPAWN_PLAYER event.
-     * Either caused by death, or by traveling from the End to the overworld.
-     */
-    public static class Clone extends PlayerEventWrapper
-    {
-        private final Player original;
-        private final boolean wasDeath;
-
-        public Clone(Player _new, Player oldPlayer, boolean wasDeath)
-        {
-            super(_new);
-            this.original = oldPlayer;
-            this.wasDeath = wasDeath;
-        }
-
-        public Clone(PlayerEvent.Clone event) {
-            this(event.getEntity(), event.getOriginal(), event.isWasDeath());
-        }
-
-        /**
-         * The old EntityPlayer that this new entity is a clone of.
-         */
-        public Player getOriginal()
-        {
-            return original;
-        }
-
-        /**
-         * True if this event was fired because the player died.
-         * False if it was fired because the entity switched dimensions.
-         */
-        public boolean isWasDeath()
-        {
-            return wasDeath;
-        }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.Clone.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.Clone(getEntity(), getOriginal(), isWasDeath());
-        }
-    }
-
-    /**
-     * Fired when an Entity is started to be "tracked" by this player (the player receives updates about this entity, e.g. motion).
-     *
-     */
-    public static class StartTracking extends PlayerEventWrapper {
-
-        private final Entity target;
-
-        public StartTracking(Player player, Entity target)
-        {
-            super(player);
-            this.target = target;
-        }
-
-        public StartTracking(PlayerEvent.StartTracking event) {
-            this(event.getEntity(), event.getTarget());
-        }
-
-        /**
-         * The Entity now being tracked.
-         */
-        public Entity getTarget()
-        {
-            return target;
-        }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.StartTracking.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.StartTracking(getEntity(), getTarget());
-        }
-    }
-
-    /**
-     * Fired when an Entity is stopped to be "tracked" by this player (the player no longer receives updates about this entity, e.g. motion).
-     *
-     */
-    public static class StopTracking extends PlayerEventWrapper {
-
-        private final Entity target;
-
-        public StopTracking(Player player, Entity target)
-        {
-            super(player);
-            this.target = target;
-        }
-
-        public StopTracking(PlayerEvent.StopTracking event) {
-            this(event.getEntity(), event.getTarget());
-        }
-
-        /**
-         * The Entity no longer being tracked.
-         */
-        public Entity getTarget()
-        {
-            return target;
-        }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.StopTracking.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.StopTracking(getEntity(), getTarget());
-        }
-    }
-
-    /**
-     * The player is being loaded from the world save. Note that the
-     * player won't have been added to the world yet. Intended to
-     * allow mods to load an additional file from the players directory
-     * containing additional mod related player data.
-     */
-    public static class LoadFromFile extends PlayerEventWrapper {
-        private final File playerDirectory;
-        private final String playerUUID;
-
-        public LoadFromFile(Player player, File originDirectory, String playerUUID)
-        {
-            super(player);
-            this.playerDirectory = originDirectory;
-            this.playerUUID = playerUUID;
-        }
-
-        public LoadFromFile(PlayerEvent.LoadFromFile event) {
-            this(event.getEntity(), event.getPlayerDirectory(), event.getPlayerUUID());
-        }
-
-        /**
-         * Construct and return a recommended file for the supplied suffix
-         * @param suffix The suffix to use.
-         */
-        public File getPlayerFile(String suffix)
-        {
-            if ("dat".equals(suffix)) {
-                throw new IllegalArgumentException("The suffix 'dat' is reserved");
-            }
-            return new File(this.getPlayerDirectory(), this.getPlayerUUID() +"."+suffix);
-        }
-
-        /**
-         * The directory where player data is being stored. Use this
-         * to locate your mod additional file.
-         */
-        public File getPlayerDirectory()
-        {
-            return playerDirectory;
-        }
-
-        /**
-         * The UUID is the standard for player related file storage.
-         * It is broken out here for convenience for quick file generation.
-         */
-        public String getPlayerUUID()
-        {
-            return playerUUID;
-        }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.LoadFromFile.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.LoadFromFile(getEntity(), getPlayerDirectory(), getPlayerUUID());
-        }
-    }
-    /**
-     * The player is being saved to the world store. Note that the
-     * player may be in the process of logging out or otherwise departing
-     * from the world. Don't assume it's association with the world.
-     * This allows mods to load an additional file from the players directory
-     * containing additional mod related player data.
-     * <br>
-     * Use this event to save the additional mod related player data to the world.
-     *
-     * <br>
-     * <em>WARNING</em>: Do not overwrite the player's .dat file here. You will
-     * corrupt the world state.
-     */
-    public static class SaveToFile extends PlayerEventWrapper {
-        private final File playerDirectory;
-        private final String playerUUID;
-
-        public SaveToFile(Player player, File originDirectory, String playerUUID)
-        {
-            super(player);
-            this.playerDirectory = originDirectory;
-            this.playerUUID = playerUUID;
-        }
-
-        public SaveToFile(PlayerEvent.SaveToFile event) {
-            this(event.getEntity(), event.getPlayerDirectory(), event.getPlayerUUID());
-        }
-
-        /**
-         * Construct and return a recommended file for the supplied suffix
-         * @param suffix The suffix to use.
-         */
-        public File getPlayerFile(String suffix)
-        {
-            if ("dat".equals(suffix)) {
-                throw new IllegalArgumentException("The suffix 'dat' is reserved");
-            }
-            return new File(this.getPlayerDirectory(), this.getPlayerUUID() +"."+suffix);
-        }
-
-        /**
-         * The directory where player data is being stored. Use this
-         * to locate your mod additional file.
-         */
-        public File getPlayerDirectory()
-        {
-            return playerDirectory;
-        }
-
-        /**
-         * The UUID is the standard for player related file storage.
-         * It is broken out here for convenience for quick file generation.
-         */
-        public String getPlayerUUID()
-        {
-            return playerUUID;
-        }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.SaveToFile.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.SaveToFile(getEntity(), getPlayerDirectory(), getPlayerUUID());
-        }
-    }
-
-    public static class ItemPickupEvent extends PlayerEventWrapper {
-        /**
-         * Original EntityItem with current remaining stack size
-         */
-        private final ItemEntity originalEntity;
-        /**
-         * Clone item stack, containing the item and amount picked up
-         */
-        private final ItemStack stack;
-        public ItemPickupEvent(Player player, ItemEntity entPickedUp, ItemStack stack)
-        {
-            super(player);
-            this.originalEntity = entPickedUp;
-            this.stack = stack;
-        }
-
-        public ItemPickupEvent(PlayerEvent.ItemPickupEvent event) {
-            this(event.getEntity(), event.getOriginalEntity(), event.getStack());
-        }
-
-        public ItemStack getStack() {
-            return stack;
-        }
-
-        public ItemEntity getOriginalEntity() {
-            return originalEntity;
-        }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.ItemPickupEvent.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.ItemPickupEvent(getEntity(), getOriginalEntity(), getStack());
-        }
-    }
-
-    public static class ItemCraftedEvent extends PlayerEventWrapper {
-        @NotNull
-        private final ItemStack crafting;
-        private final Container craftMatrix;
-        public ItemCraftedEvent(Player player, @NotNull ItemStack crafting, Container craftMatrix)
-        {
-            super(player);
-            this.crafting = crafting;
-            this.craftMatrix = craftMatrix;
-        }
-
-        public ItemCraftedEvent(PlayerEvent.ItemCraftedEvent event) {
-            this(event.getEntity(), event.getCrafting(), event.getInventory());
-        }
-
-        @NotNull
-        public ItemStack getCrafting()
-        {
-            return this.crafting;
-        }
-
-        public Container getInventory()
-        {
-            return this.craftMatrix;
-        }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.ItemCraftedEvent.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.ItemCraftedEvent(getEntity(), getCrafting(), getInventory());
-        }
-    }
-
-    public static class ItemSmeltedEvent extends PlayerEventWrapper {
-        @NotNull
-        private final ItemStack smelting;
-        public ItemSmeltedEvent(Player player, @NotNull ItemStack crafting)
-        {
-            super(player);
-            this.smelting = crafting;
-        }
-
-        public ItemSmeltedEvent(PlayerEvent.ItemSmeltedEvent event) {
-            this(event.getEntity(), event.getSmelting());
-        }
-
-        @NotNull
-        public ItemStack getSmelting()
-        {
-            return this.smelting;
-        }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.ItemSmeltedEvent.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.ItemSmeltedEvent(getEntity(), getSmelting());
-        }
-    }
-
-    public static class PlayerLoggedInEvent extends PlayerEventWrapper {
-        public PlayerLoggedInEvent(Player player)
-        {
-            super(player);
-        }
-
-        public PlayerLoggedInEvent(PlayerEvent.PlayerLoggedInEvent event) {
-            this(event.getEntity());
-        }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.PlayerLoggedInEvent.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.PlayerLoggedInEvent(getEntity());
-        }
-    }
-
-    public static class PlayerLoggedOutEvent extends PlayerEventWrapper {
-        public PlayerLoggedOutEvent(Player player)
-        {
-            super(player);
-        }
-
-        public PlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
-            this(event.getEntity());
-        }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.PlayerLoggedOutEvent.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.PlayerLoggedOutEvent(getEntity());
-        }
-    }
-
-    public static class PlayerRespawnEvent extends PlayerEventWrapper {
-        private final boolean endConquered;
-
-        public PlayerRespawnEvent(Player player, boolean endConquered)
-        {
-            super(player);
-            this.endConquered = endConquered;
-        }
-
-        public PlayerRespawnEvent(PlayerEvent.PlayerRespawnEvent event) {
-            this(event.getEntity(), event.isEndConquered());
-        }
-
-        /**
-         * Did this respawn event come from the player conquering the end?
-         * @return if this respawn was because the player conquered the end
-         */
-        public boolean isEndConquered()
-        {
-            return this.endConquered;
-        }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.PlayerRespawnEvent.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.PlayerRespawnEvent(getEntity(), isEndConquered());
-        }
-    }
-
-    public static class PlayerChangedDimensionEvent extends PlayerEventWrapper {
-        private final ResourceKey<Level> fromDim;
-        private final ResourceKey<Level> toDim;
-        public PlayerChangedDimensionEvent(Player player, ResourceKey<Level> fromDim, ResourceKey<Level> toDim)
-        {
-            super(player);
-            this.fromDim = fromDim;
-            this.toDim = toDim;
-        }
-
-        public PlayerChangedDimensionEvent(PlayerEvent.PlayerChangedDimensionEvent event) {
-            this(event.getEntity(), event.getFrom(), event.getTo());
-        }
-
-        public ResourceKey<Level> getFrom()
-        {
-            return this.fromDim;
-        }
-
-        public ResourceKey<Level> getTo()
-        {
-            return this.toDim;
-        }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.PlayerChangedDimensionEvent.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.PlayerChangedDimensionEvent(getEntity(), getFrom(), getTo());
-        }
-    }
-
-    /**
-     * Fired when the game type of a server player is changed to a different value than what it was previously. Eg Creative to Survival, not Survival to Survival.
-     * If the event is cancelled the game mode of the player is not changed and the value of <code>newGameMode</code> is ignored.
-     */
-    @Cancelable
-    public static class PlayerChangeGameModeEvent extends PlayerEventWrapper
-    {
-        private final GameType currentGameMode;
-        private GameType newGameMode;
-
-        public PlayerChangeGameModeEvent(Player player, GameType currentGameMode, GameType newGameMode)
-        {
-            super(player);
-            this.currentGameMode = currentGameMode;
-            this.newGameMode = newGameMode;
-        }
-
-        public PlayerChangeGameModeEvent(PlayerEvent.PlayerChangeGameModeEvent event) {
-            this(event.getEntity(), event.getCurrentGameMode(), event.getNewGameMode());
-        }
-
-        public GameType getCurrentGameMode()
-        {
-            return currentGameMode;
-        }
-
-        public GameType getNewGameMode()
-        {
-            return newGameMode;
-        }
-
-        /**
-         * Sets the game mode the player will be changed to if this event is not cancelled.
-         */
-        public void setNewGameMode(GameType newGameMode)
-        {
-            this.newGameMode = newGameMode;
-        }
-
-        public static Class<? extends Event> getForgeClass() {
-            return PlayerEvent.PlayerChangeGameModeEvent.class;
-        }
-
-        @Override
-        public Object toForgeEvent() {
-            return new PlayerEvent.PlayerChangeGameModeEvent(getEntity(), getCurrentGameMode(), getNewGameMode());
-        }
-    }
+	private final Player player;
+
+	public PlayerEventWrapper(Player player) {
+		super(player);
+		this.player = player;
+	}
+
+	public PlayerEventWrapper(PlayerEvent event) {
+		this(event.getEntity());
+	}
+
+	@Override
+	public Player getEntity() {
+		return player;
+	}
+
+	public static Class<? extends Event> getForgeClass() {
+		return PlayerEvent.class;
+	}
+
+	/**
+	 * HarvestCheck is fired when a player attempts to harvest a block.<br>
+	 * This event is fired whenever a player attempts to harvest a block in
+	 * {@link Player#hasCorrectToolForDrops(BlockState)}.<br>
+	 * <br>
+	 * This event is fired via the {@link ForgeEventFactory#doPlayerHarvestCheck(Player, BlockState, boolean)}.<br>
+	 * <br>
+	 * {@link #state} contains the {@link BlockState} that is being checked for harvesting. <br>
+	 * {@link #success} contains the boolean value for whether the Block will be successfully harvested. <br>
+	 * <br>
+	 * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+	 * <br>
+	 * This event does not have a result. {@link HasResult}<br>
+	 * <br>
+	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+	 **/
+	public static class HarvestCheck extends PlayerEventWrapper {
+		private final BlockState state;
+		private boolean success;
+
+		public HarvestCheck(Player player, BlockState state, boolean success) {
+			super(player);
+			this.state = state;
+			this.success = success;
+		}
+
+		public HarvestCheck(PlayerEvent.HarvestCheck event) {
+			this(event.getEntity(), event.getTargetBlock(), event.canHarvest());
+		}
+
+		public BlockState getTargetBlock() {
+			return this.state;
+		}
+
+		public boolean canHarvest() {
+			return this.success;
+		}
+
+		public void setCanHarvest(boolean success) {
+			this.success = success;
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.HarvestCheck.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.HarvestCheck(getEntity(), getTargetBlock(), canHarvest());
+		}
+	}
+
+	/**
+	 * BreakSpeed is fired when a player attempts to harvest a block.<br>
+	 * This event is fired whenever a player attempts to harvest a block in
+	 * {@link Player#getDigSpeed(BlockState, BlockPos)}.<br>
+	 * <br>
+	 * This event is fired via the {@link ForgeEventFactory#getBreakSpeed(Player, BlockState, float, BlockPos)}.<br>
+	 * <br>
+	 * {@link #state} contains the block being broken. <br>
+	 * {@link #originalSpeed} contains the original speed at which the player broke the block. <br>
+	 * {@link #newSpeed} contains the newSpeed at which the player will break the block. <br>
+	 * {@link #pos} contains the coordinates at which this event is occurring. Optional value.<br>
+	 * <br>
+	 * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+	 * If it is canceled, the player is unable to break the block.<br>
+	 * <br>
+	 * This event does not have a result. {@link HasResult}<br>
+	 * <br>
+	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+	 **/
+	@Cancelable
+	public static class BreakSpeed extends PlayerEventWrapper {
+		private static final BlockPos LEGACY_UNKNOWN = new BlockPos(0, -114514, 0);
+		private final BlockState state;
+		private final float originalSpeed;
+		private float newSpeed = 0.0f;
+		private final Optional<BlockPos> pos; // Y position of -114514 notes unknown location
+
+		public BreakSpeed(Player player, BlockState state, float original, @Nullable BlockPos pos) {
+			super(player);
+			this.state = state;
+			this.originalSpeed = original;
+			this.setNewSpeed(original);
+			this.pos = Optional.ofNullable(pos);
+		}
+
+		public BreakSpeed(PlayerEvent.BreakSpeed event) {
+			this(event.getEntity(), event.getState(), event.getOriginalSpeed(), event.getPosition().isPresent() ? event.getPosition().get() : null);
+		}
+
+		public BlockState getState() {
+			return state;
+		}
+
+		public float getOriginalSpeed() {
+			return originalSpeed;
+		}
+
+		public float getNewSpeed() {
+			return newSpeed;
+		}
+
+		public void setNewSpeed(float newSpeed) {
+			this.newSpeed = newSpeed;
+		}
+
+		public Optional<BlockPos> getPosition() {
+			return this.pos;
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.BreakSpeed.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.BreakSpeed(getEntity(), getState(), getOriginalSpeed(), getPosition().isPresent() ? getPosition().get() : null);
+		}
+	}
+
+	/**
+	 * NameFormat is fired when a player's display name is retrieved.<br>
+	 * This event is fired whenever a player's name is retrieved in
+	 * {@link Player#getDisplayName()} or {@link Player#refreshDisplayName()}.<br>
+	 * <br>
+	 * This event is fired via the {@link ForgeEventFactory#getPlayerDisplayName(Player, Component)}.<br>
+	 * <br>
+	 * {@link #username} contains the username of the player.
+	 * {@link #displayname} contains the display name of the player.
+	 * <br>
+	 * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
+	 * <br>
+	 * This event does not have a result. {@link HasResult}
+	 * <br>
+	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+	 **/
+	public static class NameFormat extends PlayerEventWrapper {
+		private final Component username;
+		private Component displayname;
+
+		public NameFormat(Player player, Component username) {
+			super(player);
+			this.username = username;
+			this.setDisplayname(username);
+		}
+
+		public NameFormat(PlayerEvent.NameFormat event) {
+			this(event.getEntity(), event.getUsername());
+		}
+
+		public Component getUsername() {
+			return username;
+		}
+
+		public Component getDisplayname() {
+			return displayname;
+		}
+
+		public void setDisplayname(Component displayname) {
+			this.displayname = displayname;
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.NameFormat.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.NameFormat(getEntity(), getUsername());
+		}
+	}
+
+	/**
+	 * TabListNameFormat is fired when a player's display name for the tablist is retrieved.<br>
+	 * This event is fired whenever a player's display name for the tablist is retrieved in
+	 * {@link ServerPlayer#getTabListDisplayName()} or {@link ServerPlayer#refreshTabListName()}.<br>
+	 * <br>
+	 * This event is fired via the {@link ForgeEventFactory#getPlayerTabListDisplayName(Player)}.<br>
+	 * <br>
+	 * {@link #getDisplayName()} contains the display name of the player or null if the client should determine the
+	 * display name itself.
+	 * <br>
+	 * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
+	 * <br>
+	 * This event does not have a result. {@link HasResult}
+	 * <br>
+	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+	 **/
+	public static class TabListNameFormat extends PlayerEventWrapper {
+		@Nullable
+		private Component displayName;
+
+		public TabListNameFormat(Player player) {
+			super(player);
+		}
+
+		public TabListNameFormat(PlayerEvent.TabListNameFormat event) {
+			this(event.getEntity());
+		}
+
+		@Nullable
+		public Component getDisplayName() {
+			return displayName;
+		}
+
+		public void setDisplayName(@Nullable Component displayName) {
+			this.displayName = displayName;
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.TabListNameFormat.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.TabListNameFormat(getEntity());
+		}
+	}
+
+	/**
+	 * Fired when the EntityPlayer is cloned, typically caused by the impl sending a RESPAWN_PLAYER event.
+	 * Either caused by death, or by traveling from the End to the overworld.
+	 */
+	public static class Clone extends PlayerEventWrapper {
+		private final Player original;
+		private final boolean wasDeath;
+
+		public Clone(Player _new, Player oldPlayer, boolean wasDeath) {
+			super(_new);
+			this.original = oldPlayer;
+			this.wasDeath = wasDeath;
+		}
+
+		public Clone(PlayerEvent.Clone event) {
+			this(event.getEntity(), event.getOriginal(), event.isWasDeath());
+		}
+
+		/**
+		 * The old EntityPlayer that this new entity is a clone of.
+		 */
+		public Player getOriginal() {
+			return original;
+		}
+
+		/**
+		 * True if this event was fired because the player died.
+		 * False if it was fired because the entity switched dimensions.
+		 */
+		public boolean isWasDeath() {
+			return wasDeath;
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.Clone.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.Clone(getEntity(), getOriginal(), isWasDeath());
+		}
+	}
+
+	/**
+	 * Fired when an Entity is started to be "tracked" by this player (the player receives updates about this entity,
+	 * e.g. motion).
+	 *
+	 */
+	public static class StartTracking extends PlayerEventWrapper {
+
+		private final Entity target;
+
+		public StartTracking(Player player, Entity target) {
+			super(player);
+			this.target = target;
+		}
+
+		public StartTracking(PlayerEvent.StartTracking event) {
+			this(event.getEntity(), event.getTarget());
+		}
+
+		/**
+		 * The Entity now being tracked.
+		 */
+		public Entity getTarget() {
+			return target;
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.StartTracking.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.StartTracking(getEntity(), getTarget());
+		}
+	}
+
+	/**
+	 * Fired when an Entity is stopped to be "tracked" by this player (the player no longer receives updates about this
+	 * entity, e.g. motion).
+	 *
+	 */
+	public static class StopTracking extends PlayerEventWrapper {
+
+		private final Entity target;
+
+		public StopTracking(Player player, Entity target) {
+			super(player);
+			this.target = target;
+		}
+
+		public StopTracking(PlayerEvent.StopTracking event) {
+			this(event.getEntity(), event.getTarget());
+		}
+
+		/**
+		 * The Entity no longer being tracked.
+		 */
+		public Entity getTarget() {
+			return target;
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.StopTracking.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.StopTracking(getEntity(), getTarget());
+		}
+	}
+
+	/**
+	 * The player is being loaded from the world save. Note that the
+	 * player won't have been added to the world yet. Intended to
+	 * allow mods to load an additional file from the players directory
+	 * containing additional mod related player data.
+	 */
+	public static class LoadFromFile extends PlayerEventWrapper {
+		private final File playerDirectory;
+		private final String playerUUID;
+
+		public LoadFromFile(Player player, File originDirectory, String playerUUID) {
+			super(player);
+			this.playerDirectory = originDirectory;
+			this.playerUUID = playerUUID;
+		}
+
+		public LoadFromFile(PlayerEvent.LoadFromFile event) {
+			this(event.getEntity(), event.getPlayerDirectory(), event.getPlayerUUID());
+		}
+
+		/**
+		 * Construct and return a recommended file for the supplied suffix
+		 * 
+		 * @param suffix The suffix to use.
+		 */
+		public File getPlayerFile(String suffix) {
+			if ("dat".equals(suffix)) {
+				throw new IllegalArgumentException("The suffix 'dat' is reserved");
+			}
+			return new File(this.getPlayerDirectory(), this.getPlayerUUID() + "." + suffix);
+		}
+
+		/**
+		 * The directory where player data is being stored. Use this
+		 * to locate your mod additional file.
+		 */
+		public File getPlayerDirectory() {
+			return playerDirectory;
+		}
+
+		/**
+		 * The UUID is the standard for player related file storage.
+		 * It is broken out here for convenience for quick file generation.
+		 */
+		public String getPlayerUUID() {
+			return playerUUID;
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.LoadFromFile.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.LoadFromFile(getEntity(), getPlayerDirectory(), getPlayerUUID());
+		}
+	}
+
+	/**
+	 * The player is being saved to the world store. Note that the
+	 * player may be in the process of logging out or otherwise departing
+	 * from the world. Don't assume it's association with the world.
+	 * This allows mods to load an additional file from the players directory
+	 * containing additional mod related player data.
+	 * <br>
+	 * Use this event to save the additional mod related player data to the world.
+	 *
+	 * <br>
+	 * <em>WARNING</em>: Do not overwrite the player's .dat file here. You will
+	 * corrupt the world state.
+	 */
+	public static class SaveToFile extends PlayerEventWrapper {
+		private final File playerDirectory;
+		private final String playerUUID;
+
+		public SaveToFile(Player player, File originDirectory, String playerUUID) {
+			super(player);
+			this.playerDirectory = originDirectory;
+			this.playerUUID = playerUUID;
+		}
+
+		public SaveToFile(PlayerEvent.SaveToFile event) {
+			this(event.getEntity(), event.getPlayerDirectory(), event.getPlayerUUID());
+		}
+
+		/**
+		 * Construct and return a recommended file for the supplied suffix
+		 * 
+		 * @param suffix The suffix to use.
+		 */
+		public File getPlayerFile(String suffix) {
+			if ("dat".equals(suffix)) {
+				throw new IllegalArgumentException("The suffix 'dat' is reserved");
+			}
+			return new File(this.getPlayerDirectory(), this.getPlayerUUID() + "." + suffix);
+		}
+
+		/**
+		 * The directory where player data is being stored. Use this
+		 * to locate your mod additional file.
+		 */
+		public File getPlayerDirectory() {
+			return playerDirectory;
+		}
+
+		/**
+		 * The UUID is the standard for player related file storage.
+		 * It is broken out here for convenience for quick file generation.
+		 */
+		public String getPlayerUUID() {
+			return playerUUID;
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.SaveToFile.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.SaveToFile(getEntity(), getPlayerDirectory(), getPlayerUUID());
+		}
+	}
+
+	public static class ItemPickupEvent extends PlayerEventWrapper {
+		/**
+		 * Original EntityItem with current remaining stack size
+		 */
+		private final ItemEntity originalEntity;
+		/**
+		 * Clone item stack, containing the item and amount picked up
+		 */
+		private final ItemStack stack;
+
+		public ItemPickupEvent(Player player, ItemEntity entPickedUp, ItemStack stack) {
+			super(player);
+			this.originalEntity = entPickedUp;
+			this.stack = stack;
+		}
+
+		public ItemPickupEvent(PlayerEvent.ItemPickupEvent event) {
+			this(event.getEntity(), event.getOriginalEntity(), event.getStack());
+		}
+
+		public ItemStack getStack() {
+			return stack;
+		}
+
+		public ItemEntity getOriginalEntity() {
+			return originalEntity;
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.ItemPickupEvent.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.ItemPickupEvent(getEntity(), getOriginalEntity(), getStack());
+		}
+	}
+
+	public static class ItemCraftedEvent extends PlayerEventWrapper {
+		@NotNull
+		private final ItemStack crafting;
+		private final Container craftMatrix;
+
+		public ItemCraftedEvent(Player player, @NotNull ItemStack crafting, Container craftMatrix) {
+			super(player);
+			this.crafting = crafting;
+			this.craftMatrix = craftMatrix;
+		}
+
+		public ItemCraftedEvent(PlayerEvent.ItemCraftedEvent event) {
+			this(event.getEntity(), event.getCrafting(), event.getInventory());
+		}
+
+		@NotNull
+		public ItemStack getCrafting() {
+			return this.crafting;
+		}
+
+		public Container getInventory() {
+			return this.craftMatrix;
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.ItemCraftedEvent.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.ItemCraftedEvent(getEntity(), getCrafting(), getInventory());
+		}
+	}
+
+	public static class ItemSmeltedEvent extends PlayerEventWrapper {
+		@NotNull
+		private final ItemStack smelting;
+
+		public ItemSmeltedEvent(Player player, @NotNull ItemStack crafting) {
+			super(player);
+			this.smelting = crafting;
+		}
+
+		public ItemSmeltedEvent(PlayerEvent.ItemSmeltedEvent event) {
+			this(event.getEntity(), event.getSmelting());
+		}
+
+		@NotNull
+		public ItemStack getSmelting() {
+			return this.smelting;
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.ItemSmeltedEvent.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.ItemSmeltedEvent(getEntity(), getSmelting());
+		}
+	}
+
+	public static class PlayerLoggedInEvent extends PlayerEventWrapper {
+		public PlayerLoggedInEvent(Player player) {
+			super(player);
+		}
+
+		public PlayerLoggedInEvent(PlayerEvent.PlayerLoggedInEvent event) {
+			this(event.getEntity());
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.PlayerLoggedInEvent.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.PlayerLoggedInEvent(getEntity());
+		}
+	}
+
+	public static class PlayerLoggedOutEvent extends PlayerEventWrapper {
+		public PlayerLoggedOutEvent(Player player) {
+			super(player);
+		}
+
+		public PlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
+			this(event.getEntity());
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.PlayerLoggedOutEvent.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.PlayerLoggedOutEvent(getEntity());
+		}
+	}
+
+	public static class PlayerRespawnEvent extends PlayerEventWrapper {
+		private final boolean endConquered;
+
+		public PlayerRespawnEvent(Player player, boolean endConquered) {
+			super(player);
+			this.endConquered = endConquered;
+		}
+
+		public PlayerRespawnEvent(PlayerEvent.PlayerRespawnEvent event) {
+			this(event.getEntity(), event.isEndConquered());
+		}
+
+		/**
+		 * Did this respawn event come from the player conquering the end?
+		 * 
+		 * @return if this respawn was because the player conquered the end
+		 */
+		public boolean isEndConquered() {
+			return this.endConquered;
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.PlayerRespawnEvent.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.PlayerRespawnEvent(getEntity(), isEndConquered());
+		}
+	}
+
+	public static class PlayerChangedDimensionEvent extends PlayerEventWrapper {
+		private final ResourceKey<Level> fromDim;
+		private final ResourceKey<Level> toDim;
+
+		public PlayerChangedDimensionEvent(Player player, ResourceKey<Level> fromDim, ResourceKey<Level> toDim) {
+			super(player);
+			this.fromDim = fromDim;
+			this.toDim = toDim;
+		}
+
+		public PlayerChangedDimensionEvent(PlayerEvent.PlayerChangedDimensionEvent event) {
+			this(event.getEntity(), event.getFrom(), event.getTo());
+		}
+
+		public ResourceKey<Level> getFrom() {
+			return this.fromDim;
+		}
+
+		public ResourceKey<Level> getTo() {
+			return this.toDim;
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.PlayerChangedDimensionEvent.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.PlayerChangedDimensionEvent(getEntity(), getFrom(), getTo());
+		}
+	}
+
+	/**
+	 * Fired when the game type of a server player is changed to a different value than what it was previously. Eg
+	 * Creative to Survival, not Survival to Survival.
+	 * If the event is cancelled the game mode of the player is not changed and the value of <code>newGameMode</code> is
+	 * ignored.
+	 */
+	@Cancelable
+	public static class PlayerChangeGameModeEvent extends PlayerEventWrapper {
+		private final GameType currentGameMode;
+		private GameType newGameMode;
+
+		public PlayerChangeGameModeEvent(Player player, GameType currentGameMode, GameType newGameMode) {
+			super(player);
+			this.currentGameMode = currentGameMode;
+			this.newGameMode = newGameMode;
+		}
+
+		public PlayerChangeGameModeEvent(PlayerEvent.PlayerChangeGameModeEvent event) {
+			this(event.getEntity(), event.getCurrentGameMode(), event.getNewGameMode());
+		}
+
+		public GameType getCurrentGameMode() {
+			return currentGameMode;
+		}
+
+		public GameType getNewGameMode() {
+			return newGameMode;
+		}
+
+		/**
+		 * Sets the game mode the player will be changed to if this event is not cancelled.
+		 */
+		public void setNewGameMode(GameType newGameMode) {
+			this.newGameMode = newGameMode;
+		}
+
+		public static Class<? extends Event> getForgeClass() {
+			return PlayerEvent.PlayerChangeGameModeEvent.class;
+		}
+
+		@Override
+		public Object toForgeEvent() {
+			return new PlayerEvent.PlayerChangeGameModeEvent(getEntity(), getCurrentGameMode(), getNewGameMode());
+		}
+	}
 }

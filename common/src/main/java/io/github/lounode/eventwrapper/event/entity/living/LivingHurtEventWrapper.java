@@ -1,6 +1,5 @@
 package io.github.lounode.eventwrapper.event.entity.living;
 
-import io.github.lounode.eventwrapper.eventbus.api.Cancelable;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.ForgeHooks;
@@ -9,6 +8,8 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 
+
+import io.github.lounode.eventwrapper.eventbus.api.Cancelable;
 
 /**
  * LivingHurtEvent is fired when an Entity is set to be hurt. <br>
@@ -27,36 +28,43 @@ import net.minecraftforge.eventbus.api.Event;
  * This event does not have a result. {@link Event.HasResult}<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * 
  * @see LivingDamageEvent
  **/
 @Cancelable
-public class LivingHurtEventWrapper extends LivingEventWrapper{
+public class LivingHurtEventWrapper extends LivingEventWrapper {
 
-    private final DamageSource source;
-    private float amount;
-    public LivingHurtEventWrapper(LivingEntity entity, DamageSource source, float amount)
-    {
-        super(entity);
-        this.source = source;
-        this.amount = amount;
-    }
+	private final DamageSource source;
+	private float amount;
 
-    public LivingHurtEventWrapper(LivingHurtEvent event) {
-        this(event.getEntity(), event.getSource(), event.getAmount());
-    }
+	public LivingHurtEventWrapper(LivingEntity entity, DamageSource source, float amount) {
+		super(entity);
+		this.source = source;
+		this.amount = amount;
+	}
 
-    public DamageSource getSource() { return source; }
+	public LivingHurtEventWrapper(LivingHurtEvent event) {
+		this(event.getEntity(), event.getSource(), event.getAmount());
+	}
 
-    public float getAmount() { return amount; }
+	public DamageSource getSource() {
+		return source;
+	}
 
-    public void setAmount(float amount) { this.amount = amount; }
+	public float getAmount() {
+		return amount;
+	}
 
-    public static Class<? extends Event> getForgeClass() {
-        return LivingHurtEvent.class;
-    }
+	public void setAmount(float amount) {
+		this.amount = amount;
+	}
 
-    @Override
-    public Object toForgeEvent() {
-        return new LivingHurtEvent(getEntity(), getSource(), getAmount());
-    }
+	public static Class<? extends Event> getForgeClass() {
+		return LivingHurtEvent.class;
+	}
+
+	@Override
+	public Object toForgeEvent() {
+		return new LivingHurtEvent(getEntity(), getSource(), getAmount());
+	}
 }

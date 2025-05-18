@@ -1,7 +1,7 @@
 package io.github.lounode.eventwrapper.eventbus;
 
-import io.github.lounode.eventwrapper.eventbus.api.*;
 import net.jodah.typetools.TypeResolver;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -19,339 +19,330 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class EventBus implements IEventExceptionHandler, IEventBus{
-    static final Marker EVENTBUS = MarkerManager.getMarker("EVENTBUS");
+import io.github.lounode.eventwrapper.eventbus.api.*;
 
-    private static final Logger LOGGER = LogManager.getLogger();
-    private static final boolean checkTypesOnDispatchProperty = Boolean.parseBoolean(System.getProperty("eventbus.checkTypesOnDispatch", "false"));
+public class EventBus implements IEventExceptionHandler, IEventBus {
+	static final Marker EVENTBUS = MarkerManager.getMarker("EVENTBUS");
 
-    private ConcurrentHashMap<Object, List<EventListener>> listeners = new ConcurrentHashMap<>();
-    private final LockHelper<Class<?>, ListenerList> listenerLists = LockHelper.withIdentityHashMap();
-    private final IEventExceptionHandler exceptionHandler;
-    private volatile boolean shutdown = false;
+	private static final Logger LOGGER = LogManager.getLogger();
+	private static final boolean checkTypesOnDispatchProperty = Boolean.parseBoolean(System.getProperty("eventbus.checkTypesOnDispatch", "false"));
 
-    private final IEventClassChecker classChecker;
-    private final boolean checkTypesOnDispatch;
-    private final boolean allowPerPhasePost;
+	private ConcurrentHashMap<Object, List<EventListener>> listeners = new ConcurrentHashMap<>();
+	private final LockHelper<Class<?>, ListenerList> listenerLists = LockHelper.withIdentityHashMap();
+	private final IEventExceptionHandler exceptionHandler;
+	private volatile boolean shutdown = false;
 
-    @SuppressWarnings("unused")
-    private EventBus() {
-        this(new BusBuilderImpl());
-    }
+	private final IEventClassChecker classChecker;
+	private final boolean checkTypesOnDispatch;
+	private final boolean allowPerPhasePost;
 
-    private EventBus(final IEventExceptionHandler handler, boolean startShutdown, IEventClassChecker classChecker, boolean checkTypesOnDispatch, boolean allowPerPhasePost) {
-        this.exceptionHandler = Objects.requireNonNullElse(handler, this);
-        this.shutdown = startShutdown;
-        this.classChecker = classChecker;
-        this.checkTypesOnDispatch = checkTypesOnDispatch || checkTypesOnDispatchProperty;
-        this.allowPerPhasePost = allowPerPhasePost;
-    }
+	@SuppressWarnings("unused")
+	private EventBus() {
+		this(new BusBuilderImpl());
+	}
 
-    public EventBus(final BusBuilderImpl busBuilder) {
-        this(busBuilder.exceptionHandler, busBuilder.startShutdown,
-                busBuilder.classChecker, busBuilder.checkTypesOnDispatch, busBuilder.allowPerPhasePost);
-    }
+	private EventBus(final IEventExceptionHandler handler, boolean startShutdown, IEventClassChecker classChecker, boolean checkTypesOnDispatch, boolean allowPerPhasePost) {
+		this.exceptionHandler = Objects.requireNonNullElse(handler, this);
+		this.shutdown = startShutdown;
+		this.classChecker = classChecker;
+		this.checkTypesOnDispatch = checkTypesOnDispatch || checkTypesOnDispatchProperty;
+		this.allowPerPhasePost = allowPerPhasePost;
+	}
 
-    @Override
-    public void register(final Object target)
-    {
-        if (listeners.containsKey(target))
-        {
-            return;
-        }
+	public EventBus(final BusBuilderImpl busBuilder) {
+		this(busBuilder.exceptionHandler, busBuilder.startShutdown,
+				busBuilder.classChecker, busBuilder.checkTypesOnDispatch, busBuilder.allowPerPhasePost);
+	}
 
-        boolean isStatic = target.getClass() == Class.class;
-        Class<?> clazz = isStatic ? (Class<?>) target : target.getClass();
+	@Override
+	public void register(final Object target) {
+		if (listeners.containsKey(target)) {
+			return;
+		}
 
-        checkSupertypes(clazz, clazz);
+		boolean isStatic = target.getClass() == Class.class;
+		Class<?> clazz = isStatic ? (Class<?>) target : target.getClass();
 
-        int foundMethods = 0;
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (!method.isAnnotationPresent(SubscribeEventWrapper.class)) {
-                continue;
-            }
+		checkSupertypes(clazz, clazz);
 
-            if (Modifier.isStatic(method.getModifiers()) == isStatic) {
-                registerListener(target, method, method);
-            } else {
-                if (isStatic) {
-                    throw new IllegalArgumentException("""
-                            Expected @SubscribeEvent method %s to be static
-                            because register() was called with a class type.
-                            Either make the method static, or call register() with an instance of %s.
-                            """.formatted(method, clazz));
-                } else {
-                    throw new IllegalArgumentException("""
-                            Expected @SubscribeEvent method %s to NOT be static
-                            because register() was called with an instance type.
-                            Either make the method non-static, or call register(%s.class).
-                            """.formatted(method, clazz.getSimpleName()));
-                }
-            }
+		int foundMethods = 0;
+		for (Method method : clazz.getDeclaredMethods()) {
+			if (!method.isAnnotationPresent(SubscribeEventWrapper.class)) {
+				continue;
+			}
 
-            ++foundMethods;
-        }
+			if (Modifier.isStatic(method.getModifiers()) == isStatic) {
+				registerListener(target, method, method);
+			} else {
+				if (isStatic) {
+					throw new IllegalArgumentException("""
+							Expected @SubscribeEvent method %s to be static
+							because register() was called with a class type.
+							Either make the method static, or call register() with an instance of %s.
+							""".formatted(method, clazz));
+				} else {
+					throw new IllegalArgumentException("""
+							Expected @SubscribeEvent method %s to NOT be static
+							because register() was called with an instance type.
+							Either make the method non-static, or call register(%s.class).
+							""".formatted(method, clazz.getSimpleName()));
+				}
+			}
 
-        if (foundMethods == 0) {
-            throw new IllegalArgumentException("""
-                    %s has no @SubscribeEvent methods, but register was called anyway.
-                    The event bus only recognizes listener methods that have the @SubscribeEvent annotation.
-                    """.formatted(clazz)
-            );
-        }
-    }
+			++foundMethods;
+		}
 
-    private static void checkSupertypes(Class<?> registeredType, Class<?> type) {
-        if (type == null || type == Object.class) {
-            return;
-        }
+		if (foundMethods == 0) {
+			throw new IllegalArgumentException("""
+					%s has no @SubscribeEvent methods, but register was called anyway.
+					The event bus only recognizes listener methods that have the @SubscribeEvent annotation.
+					""".formatted(clazz)
+			);
+		}
+	}
 
-        if (type != registeredType) {
-            for (var method : type.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(SubscribeEventWrapper.class)) {
-                    throw new IllegalArgumentException("""
-                            Attempting to register a listener object of type %s,
-                            however its supertype %s has a @SubscribeEvent method: %s.
-                            This is not allowed! Only the listener object can have @SubscribeEvent methods.
-                            """.formatted(registeredType, type, method));
-                }
-            }
-        }
+	private static void checkSupertypes(Class<?> registeredType, Class<?> type) {
+		if (type == null || type == Object.class) {
+			return;
+		}
 
-        checkSupertypes(registeredType, type.getSuperclass());
-        Stream.of(type.getInterfaces())
-                .forEach(itf -> checkSupertypes(registeredType, itf));
-    }
-    @SuppressWarnings("unchecked")
-    private void registerListener(final Object target, final Method method, final Method real) {
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        if (parameterTypes.length != 1)
-        {
-            throw new IllegalArgumentException(
-                    "Method " + method + " has @SubscribeEvent annotation. " +
-                            "It has " + parameterTypes.length + " arguments, " +
-                            "but event handler methods require a single argument only."
-            );
-        }
+		if (type != registeredType) {
+			for (var method : type.getDeclaredMethods()) {
+				if (method.isAnnotationPresent(SubscribeEventWrapper.class)) {
+					throw new IllegalArgumentException("""
+							Attempting to register a listener object of type %s,
+							however its supertype %s has a @SubscribeEvent method: %s.
+							This is not allowed! Only the listener object can have @SubscribeEvent methods.
+							""".formatted(registeredType, type, method));
+				}
+			}
+		}
 
-        Class<?> eventType = parameterTypes[0];
+		checkSupertypes(registeredType, type.getSuperclass());
+		Stream.of(type.getInterfaces())
+				.forEach(itf -> checkSupertypes(registeredType, itf));
+	}
 
-        if (!EventWrapper.class.isAssignableFrom(eventType))
-        {
-            throw new IllegalArgumentException(
-                    "Method " + method + " has @SubscribeEvent annotation, " +
-                            "but takes an argument that is not an Event subtype : " + eventType);
-        }
-        try {
-            classChecker.check((Class<? extends EventWrapper>) eventType);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(
-                    "Method " + method + " has @SubscribeEvent annotation, " +
-                            "but takes an argument that is not valid for this bus" + eventType, e);
-        }
+	@SuppressWarnings("unchecked")
+	private void registerListener(final Object target, final Method method, final Method real) {
+		Class<?>[] parameterTypes = method.getParameterTypes();
+		if (parameterTypes.length != 1) {
+			throw new IllegalArgumentException(
+					"Method " + method + " has @SubscribeEvent annotation. " +
+							"It has " + parameterTypes.length + " arguments, " +
+							"but event handler methods require a single argument only."
+			);
+		}
 
-        register(eventType, target, real);
-    }
+		Class<?> eventType = parameterTypes[0];
 
-    @Nullable
-    private <T extends EventWrapper> Predicate<T> passNotGenericFilter(boolean receiveCanceled) {
-        // The cast is safe because the filter is removed if the event is not cancellable
-        return receiveCanceled ? null : e -> !e.isCanceled();
-    }
+		if (!EventWrapper.class.isAssignableFrom(eventType)) {
+			throw new IllegalArgumentException(
+					"Method " + method + " has @SubscribeEvent annotation, " +
+							"but takes an argument that is not an Event subtype : " + eventType);
+		}
+		try {
+			classChecker.check((Class<? extends EventWrapper>) eventType);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException(
+					"Method " + method + " has @SubscribeEvent annotation, " +
+							"but takes an argument that is not valid for this bus" + eventType,
+					e);
+		}
 
-    @Override
-    public <T extends EventWrapper> void addListener(final Consumer<T> consumer) {
-        addListener(EventPriority.NORMAL, consumer);
-    }
+		register(eventType, target, real);
+	}
 
-    @Override
-    public <T extends EventWrapper> void addListener(final EventPriority priority, final Consumer<T> consumer) {
-        addListener(priority, false, consumer);
-    }
+	@Nullable
+	private <T extends EventWrapper> Predicate<T> passNotGenericFilter(boolean receiveCanceled) {
+		// The cast is safe because the filter is removed if the event is not cancellable
+		return receiveCanceled ? null : e -> !e.isCanceled();
+	}
 
-    @Override
-    public <T extends EventWrapper> void addListener(final EventPriority priority, final boolean receiveCanceled, final Consumer<T> consumer) {
-        addListener(priority, passNotGenericFilter(receiveCanceled), consumer);
-    }
+	@Override
+	public <T extends EventWrapper> void addListener(final Consumer<T> consumer) {
+		addListener(EventPriority.NORMAL, consumer);
+	}
 
-    @Override
-    public <T extends EventWrapper> void addListener(EventPriority priority, Class<T> eventType, Consumer<T> consumer) {
-        addListener(priority, false, eventType, consumer);
-    }
+	@Override
+	public <T extends EventWrapper> void addListener(final EventPriority priority, final Consumer<T> consumer) {
+		addListener(priority, false, consumer);
+	}
 
-    @Override
-    public <T extends EventWrapper> void addListener(boolean receiveCanceled, Consumer<T> consumer) {
-        addListener(EventPriority.NORMAL, receiveCanceled, consumer);
-    }
+	@Override
+	public <T extends EventWrapper> void addListener(final EventPriority priority, final boolean receiveCanceled, final Consumer<T> consumer) {
+		addListener(priority, passNotGenericFilter(receiveCanceled), consumer);
+	}
 
-    @Override
-    public <T extends EventWrapper> void addListener(boolean receiveCanceled, Class<T> eventType, Consumer<T> consumer) {
-        addListener(EventPriority.NORMAL, receiveCanceled, eventType, consumer);
-    }
+	@Override
+	public <T extends EventWrapper> void addListener(EventPriority priority, Class<T> eventType, Consumer<T> consumer) {
+		addListener(priority, false, eventType, consumer);
+	}
 
-    @Override
-    public <T extends EventWrapper> void addListener(Class<T> eventType, Consumer<T> consumer) {
-        addListener(EventPriority.NORMAL, false, eventType, consumer);
-    }
+	@Override
+	public <T extends EventWrapper> void addListener(boolean receiveCanceled, Consumer<T> consumer) {
+		addListener(EventPriority.NORMAL, receiveCanceled, consumer);
+	}
 
-    @Override
-    public <T extends EventWrapper> void addListener(final EventPriority priority, final boolean receiveCanceled, final Class<T> eventType, final Consumer<T> consumer) {
-        addListener(priority, passNotGenericFilter(receiveCanceled), eventType, consumer);
-    }
+	@Override
+	public <T extends EventWrapper> void addListener(boolean receiveCanceled, Class<T> eventType, Consumer<T> consumer) {
+		addListener(EventPriority.NORMAL, receiveCanceled, eventType, consumer);
+	}
 
-    @SuppressWarnings("unchecked")
-    private <T extends EventWrapper> Class<T> getEventClass(Consumer<T> consumer) {
-        final Class<T> eventClass = (Class<T>) TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass());
-        if ((Class<?>)eventClass == TypeResolver.Unknown.class) {
-            LOGGER.error(EVENTBUS, "Failed to resolve handler for \"{}\"", consumer.toString());
-            throw new IllegalStateException("Failed to resolve consumer event type: " + consumer.toString());
-        }
-        return eventClass;
-    }
+	@Override
+	public <T extends EventWrapper> void addListener(Class<T> eventType, Consumer<T> consumer) {
+		addListener(EventPriority.NORMAL, false, eventType, consumer);
+	}
 
-    private <T extends EventWrapper> void addListener(final EventPriority priority, @Nullable Predicate<? super T> filter, final Consumer<T> consumer) {
-        Class<T> eventClass = getEventClass(consumer);
-        if (Objects.equals(eventClass, EventWrapper.class)) {
-            LOGGER.warn(EVENTBUS,"Attempting to add a Lambda listener with computed generic type of Event. " +
-                    "Are you sure this is what you meant? NOTE : there are complex lambda forms where " +
-                    "the generic type information is erased and cannot be recovered at runtime.");
-        }
-        addListener(priority, filter, eventClass, consumer);
-    }
-    @SuppressWarnings("unchecked")
-    private <T extends EventWrapper> void addListener(final EventPriority priority, @Nullable Predicate<? super T> filter, final Class<T> eventClass, final Consumer<T> consumer) {
-        try {
-            classChecker.check(eventClass);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(
-                    "Listener for event " + eventClass + " takes an argument that is not valid for this bus", e);
-        }
-        EventListener listener = filter == null ?
-                new ConsumerEventHandler((Consumer<EventWrapper>) consumer) :
-                new ConsumerEventHandler.WithPredicate((Consumer<EventWrapper>) consumer, (Predicate<EventWrapper>) filter);
-        addToListeners(consumer, eventClass, listener, priority);
-    }
+	@Override
+	public <T extends EventWrapper> void addListener(final EventPriority priority, final boolean receiveCanceled, final Class<T> eventType, final Consumer<T> consumer) {
+		addListener(priority, passNotGenericFilter(receiveCanceled), eventType, consumer);
+	}
 
-    private void register(Class<?> eventType, Object target, Method method)
-    {
-        SubscribeEventListener listener = new SubscribeEventListener(target, method);
-        addToListeners(target, eventType, listener, listener.getPriority());
-    }
+	@SuppressWarnings("unchecked")
+	private <T extends EventWrapper> Class<T> getEventClass(Consumer<T> consumer) {
+		final Class<T> eventClass = (Class<T>) TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass());
+		if ((Class<?>) eventClass == TypeResolver.Unknown.class) {
+			LOGGER.error(EVENTBUS, "Failed to resolve handler for \"{}\"", consumer.toString());
+			throw new IllegalStateException("Failed to resolve consumer event type: " + consumer.toString());
+		}
+		return eventClass;
+	}
 
-    private void addToListeners(final Object target, final Class<?> eventType, final EventListener listener, final EventPriority priority) {
-        if (Modifier.isAbstract(eventType.getModifiers())) {
-            throw new IllegalArgumentException(
-                    "Cannot register listeners for abstract " + eventType +
-                            ". Register a listener to one of its subclasses instead!");
-        }
-        getListenerList(eventType).register(priority, listener);
-        List<EventListener> others = listeners.computeIfAbsent(target, k -> Collections.synchronizedList(new ArrayList<>()));
-        others.add(listener);
-    }
+	private <T extends EventWrapper> void addListener(final EventPriority priority, @Nullable Predicate<? super T> filter, final Consumer<T> consumer) {
+		Class<T> eventClass = getEventClass(consumer);
+		if (Objects.equals(eventClass, EventWrapper.class)) {
+			LOGGER.warn(EVENTBUS, "Attempting to add a Lambda listener with computed generic type of Event. " +
+					"Are you sure this is what you meant? NOTE : there are complex lambda forms where " +
+					"the generic type information is erased and cannot be recovered at runtime.");
+		}
+		addListener(priority, filter, eventClass, consumer);
+	}
 
-    private ListenerList getListenerList(Class<?> eventType) {
-        ListenerList list = listenerLists.get(eventType);
-        if (list != null) {
-            return list;
-        }
+	@SuppressWarnings("unchecked")
+	private <T extends EventWrapper> void addListener(final EventPriority priority, @Nullable Predicate<? super T> filter, final Class<T> eventClass, final Consumer<T> consumer) {
+		try {
+			classChecker.check(eventClass);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException(
+					"Listener for event " + eventClass + " takes an argument that is not valid for this bus", e);
+		}
+		EventListener listener = filter == null ? new ConsumerEventHandler((Consumer<EventWrapper>) consumer) : new ConsumerEventHandler.WithPredicate((Consumer<EventWrapper>) consumer, (Predicate<EventWrapper>) filter);
+		addToListeners(consumer, eventClass, listener, priority);
+	}
 
-        if (Modifier.isAbstract(eventType.getSuperclass().getModifiers())) {
-            validateAbstractChain(eventType.getSuperclass());
+	private void register(Class<?> eventType, Object target, Method method) {
+		SubscribeEventListener listener = new SubscribeEventListener(target, method);
+		addToListeners(target, eventType, listener, listener.getPriority());
+	}
 
-            return listenerLists.computeIfAbsent(eventType, e -> new ListenerList(e, allowPerPhasePost));
-        } else {
-            return listenerLists.computeIfAbsent(eventType, e -> new ListenerList(e, getListenerList(e.getSuperclass()), allowPerPhasePost));
-        }
-    }
+	private void addToListeners(final Object target, final Class<?> eventType, final EventListener listener, final EventPriority priority) {
+		if (Modifier.isAbstract(eventType.getModifiers())) {
+			throw new IllegalArgumentException(
+					"Cannot register listeners for abstract " + eventType +
+							". Register a listener to one of its subclasses instead!");
+		}
+		getListenerList(eventType).register(priority, listener);
+		List<EventListener> others = listeners.computeIfAbsent(target, k -> Collections.synchronizedList(new ArrayList<>()));
+		others.add(listener);
+	}
 
-    private static void validateAbstractChain(Class<?> eventType) {
-        while (eventType != EventWrapper.class) {
-            // Superclass must have the annotation
-            if (!Modifier.isAbstract(eventType.getSuperclass().getModifiers())) {
-                throw new IllegalArgumentException("Abstract event " + eventType +
-                        " has a non-abstract superclass " + eventType.getSuperclass() +
-                        ". The superclass must be made abstract.");
-            }
+	private ListenerList getListenerList(Class<?> eventType) {
+		ListenerList list = listenerLists.get(eventType);
+		if (list != null) {
+			return list;
+		}
 
-            eventType = eventType.getSuperclass();
-        }
-    }
+		if (Modifier.isAbstract(eventType.getSuperclass().getModifiers())) {
+			validateAbstractChain(eventType.getSuperclass());
 
-    @Override
-    public void unregister(Object object)
-    {
-        List<EventListener> list = listeners.remove(object);
-        if(list == null){
-            return;
-        }
-        for (ListenerList listenerList : listenerLists.getReadMap().values()) {
-            for (EventListener listener : list) {
-                listenerList.unregister(listener);
-            }
-        }
-    }
+			return listenerLists.computeIfAbsent(eventType, e -> new ListenerList(e, allowPerPhasePost));
+		} else {
+			return listenerLists.computeIfAbsent(eventType, e -> new ListenerList(e, getListenerList(e.getSuperclass()), allowPerPhasePost));
+		}
+	}
 
-    @Override
-    public <T extends EventWrapper> T post(T event) {
-        if (shutdown) {
-            return event;
-        }
-        doPostChecks(event);
+	private static void validateAbstractChain(Class<?> eventType) {
+		while (eventType != EventWrapper.class) {
+			// Superclass must have the annotation
+			if (!Modifier.isAbstract(eventType.getSuperclass().getModifiers())) {
+				throw new IllegalArgumentException("Abstract event " + eventType +
+						" has a non-abstract superclass " + eventType.getSuperclass() +
+						". The superclass must be made abstract.");
+			}
 
-        return post(event, getListenerList(event.getClass()).getListeners());
-    }
+			eventType = eventType.getSuperclass();
+		}
+	}
 
-    @Override
-    public <T extends EventWrapper> T post(EventPriority phase, T event) {
-        if (!allowPerPhasePost) {
-            throw new IllegalStateException("This bus does not allow calling phase-specific post.");
-        }
+	@Override
+	public void unregister(Object object) {
+		List<EventListener> list = listeners.remove(object);
+		if (list == null) {
+			return;
+		}
+		for (ListenerList listenerList : listenerLists.getReadMap().values()) {
+			for (EventListener listener : list) {
+				listenerList.unregister(listener);
+			}
+		}
+	}
 
-        if (shutdown) {
-            return event;
-        }
-        doPostChecks(event);
+	@Override
+	public <T extends EventWrapper> T post(T event) {
+		if (shutdown) {
+			return event;
+		}
+		doPostChecks(event);
 
-        return post(event, getListenerList(event.getClass()).getPhaseListeners(phase));
-    }
+		return post(event, getListenerList(event.getClass()).getListeners());
+	}
 
-    private void doPostChecks(EventWrapper event) {
-        if (checkTypesOnDispatch)
-        {
-            try {
-                classChecker.check(event.getClass());
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException(
-                        "Cannot post event of type " + event.getClass().getSimpleName() + " to this bus", e);
-            }
-        }
-    }
+	@Override
+	public <T extends EventWrapper> T post(EventPriority phase, T event) {
+		if (!allowPerPhasePost) {
+			throw new IllegalStateException("This bus does not allow calling phase-specific post.");
+		}
 
-    private <T extends EventWrapper> T post(T event, EventListener[] listeners) {
-        int index = 0;
-        try
-        {
-            for (; index < listeners.length; index++)
-            {
-                listeners[index].invoke(event);
-            }
-        }
-        catch (Throwable throwable)
-        {
-            exceptionHandler.handleException(this, event, listeners, index, throwable);
-            throw throwable;
-        }
-        return event;
-    }
+		if (shutdown) {
+			return event;
+		}
+		doPostChecks(event);
 
-    @Override
-    public void handleException(IEventBus bus, EventWrapper event, EventListener[] listeners, int index, Throwable throwable)
-    {
-        LOGGER.error(EVENTBUS, ()->new EventBusErrorMessage(event, index, listeners, throwable));
-    }
+		return post(event, getListenerList(event.getClass()).getPhaseListeners(phase));
+	}
 
-    @Override
-    public void start() {
-        this.shutdown = false;
-    }
+	private void doPostChecks(EventWrapper event) {
+		if (checkTypesOnDispatch) {
+			try {
+				classChecker.check(event.getClass());
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException(
+						"Cannot post event of type " + event.getClass().getSimpleName() + " to this bus", e);
+			}
+		}
+	}
+
+	private <T extends EventWrapper> T post(T event, EventListener[] listeners) {
+		int index = 0;
+		try {
+			for (; index < listeners.length; index++) {
+				listeners[index].invoke(event);
+			}
+		} catch (Throwable throwable) {
+			exceptionHandler.handleException(this, event, listeners, index, throwable);
+			throw throwable;
+		}
+		return event;
+	}
+
+	@Override
+	public void handleException(IEventBus bus, EventWrapper event, EventListener[] listeners, int index, Throwable throwable) {
+		LOGGER.error(EVENTBUS, () -> new EventBusErrorMessage(event, index, listeners, throwable));
+	}
+
+	@Override
+	public void start() {
+		this.shutdown = false;
+	}
 }

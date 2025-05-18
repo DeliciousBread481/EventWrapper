@@ -7,23 +7,24 @@ import net.minecraftforge.eventbus.api.Cancelable;
 
 @Cancelable
 public class ItemCooldownStartEvent extends PlayerEvent {
-    private final Item item;
-    private int ticks;
-    public ItemCooldownStartEvent(Player player, Item item, int ticks) {
-        super(player);
-        this.item = item;
-        this.ticks = ticks;
-    }
+	private final Item item;
+	private int ticks;
 
-    public Item getItem() {
-        return item;
-    }
+	public ItemCooldownStartEvent(Player player, Item item, int ticks) {
+		super(player);
+		this.item = item;
+		this.ticks = ticks;
+	}
 
-    public int getTicks() {
-        return ticks;
-    }
+	public Item getItem() {
+		return item;
+	}
 
-    public void setTicks(int ticks) {
-        this.ticks = ticks;
-    }
+	public int getTicks() {
+		return ticks;
+	}
+
+	public void setTicks(int ticks) {
+		this.ticks = ticks;
+	}
 }

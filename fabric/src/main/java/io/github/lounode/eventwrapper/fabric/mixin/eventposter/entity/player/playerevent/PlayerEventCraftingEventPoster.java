@@ -1,10 +1,10 @@
 package io.github.lounode.eventwrapper.fabric.mixin.eventposter.entity.player.playerevent;
 
-import io.github.lounode.eventwrapper.fabric.EventWrapperHooks;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.item.ItemStack;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -12,22 +12,29 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+
+import io.github.lounode.eventwrapper.fabric.EventWrapperHooks;
+
 @Mixin(ResultSlot.class)
 public class PlayerEventCraftingEventPoster {
 
-    @Shadow @Final private Player player;
+	@Shadow
+	@Final
+	private Player player;
 
-    @Shadow @Final private CraftingContainer craftSlots;
+	@Shadow
+	@Final
+	private CraftingContainer craftSlots;
 
-    @Inject(
-            method = "checkTakeAchievements",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/item/ItemStack;onCraftedBy(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;I)V",
-                    shift = At.Shift.AFTER
-            )
-    )
-    private void onCraft(ItemStack stack, CallbackInfo ci) {
-        EventWrapperHooks.firePlayerCraftingEvent(this.player, stack, this.craftSlots);
-    }
+	@Inject(
+		method = "checkTakeAchievements",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/world/item/ItemStack;onCraftedBy(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;I)V",
+			shift = At.Shift.AFTER
+		)
+	)
+	private void onCraft(ItemStack stack, CallbackInfo ci) {
+		EventWrapperHooks.firePlayerCraftingEvent(this.player, stack, this.craftSlots);
+	}
 }

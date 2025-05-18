@@ -1,35 +1,34 @@
 package io.github.lounode.eventwrapper.event.server;
 
-import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.server.ServerLifecycleEvent;
 import net.minecraftforge.eventbus.api.Event;
 
-public class ServerLifecycleEventWrapper extends EventWrapper
-{
 
-    protected final MinecraftServer server;
+import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
 
-    public ServerLifecycleEventWrapper(MinecraftServer server)
-    {
-        this.server = server;
-    }
+public class ServerLifecycleEventWrapper extends EventWrapper {
 
-    public MinecraftServer getServer()
-    {
-        return server;
-    }
+	protected final MinecraftServer server;
 
-    public ServerLifecycleEventWrapper(ServerLifecycleEvent event) {
-        this(event.getServer());
-    }
+	public ServerLifecycleEventWrapper(MinecraftServer server) {
+		this.server = server;
+	}
 
-    public static Class<? extends Event> getForgeClass() {
-        return ServerLifecycleEvent.class;
-    }
+	public MinecraftServer getServer() {
+		return server;
+	}
 
-    @Override
-    public Object toForgeEvent() {
-        return new ServerLifecycleEvent(getServer());
-    }
+	public ServerLifecycleEventWrapper(ServerLifecycleEvent event) {
+		this(event.getServer());
+	}
+
+	public static Class<? extends Event> getForgeClass() {
+		return ServerLifecycleEvent.class;
+	}
+
+	@Override
+	public Object toForgeEvent() {
+		return new ServerLifecycleEvent(getServer());
+	}
 }

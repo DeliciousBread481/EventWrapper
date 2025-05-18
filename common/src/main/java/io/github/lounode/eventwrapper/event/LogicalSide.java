@@ -1,16 +1,16 @@
 package io.github.lounode.eventwrapper.event;
 
 public enum LogicalSide {
-    CLIENT,
-    SERVER;
+	CLIENT,
+	SERVER;
 
-    LogicalSide() {}
+	LogicalSide() {}
 
-    public boolean isServer() {
-        return !this.isClient();
-    }
+	public boolean isServer() {
+		return !this.isClient();
+	}
 
-    public boolean isClient() {
-        return this == CLIENT;
-    }
+	public boolean isClient() {
+		return this == CLIENT;
+	}
 }
