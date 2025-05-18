@@ -16,7 +16,7 @@ function release_github() {
 	   --method POST \
 	   -H "Accept: application/vnd.github+json" \
 	   -H "X-GitHub-Api-Version: 2022-11-28" \
-	   /repos/VazkiiMods/Botania/releases \
+	   /repos/Lounode/EventWrapper/releases \
 	   -f tag_name="${TAGNAME}"
 
 	echo >&2 'Uploading Fabric Jar and Signature to GitHub'
