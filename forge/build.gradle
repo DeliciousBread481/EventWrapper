@@ -11,13 +11,6 @@ if (System.getenv().RELEASE_MODE != "1") {
     version += '-SNAPSHOT'
 }
 
-mixin{
-    add sourceSets.main, "eventwrapper.refmap.json"
-
-    config "eventwrapper_common.mixins.json"
-    config "eventwrapper_forge.mixins.json"
-}
-
 repositories {
     maven {
         name = "Jared"
@@ -33,22 +26,25 @@ repositories {
     }
     maven {
         name = "Unascribed"
-        url "https://repo.unascribed.com" // for ears
+        url = "https://repo.unascribed.com" // for ears
         content {
             includeGroup "com.unascribed"
         }
     }
     maven { // CURSE
-        name "CurseMaven"
-        url "https://www.cursemaven.com/"
+        name = "CurseMaven"
+        url = "https://www.cursemaven.com/"
         content {
             includeGroup "curse.maven"
         }
     }
 }
 
-sourceSets.main.java {
-    exclude 'io/github/lounode/eventwrapper/fabric/**'
+mixin{
+    add sourceSets.main, "eventwrapper.refmap.json"
+
+    config "eventwrapper_common.mixins.json"
+    config "eventwrapper_forge.mixins.json"
 }
 
 legacyForge {
@@ -66,36 +62,22 @@ legacyForge {
             systemProperty('forge.logging.console.level', 'debug')
 
             jvmArgument("-DdebugEvent=true")
+            jvmArgument("-XX:+AllowEnhancedClassRedefinition")
         }
 
         server {
             server()
             systemProperty('forge.logging.console.level', 'debug')
-        }
-        /*
-        data {
-            data()
-            programArguments.addAll "-mixin.config=eventwrapper_common.mixins.json", "-mixin.config=eventwrapper_forge.mixins.json"
-            programArguments.addAll '--mod', 'eventwrapper', '--all'
-            programArguments.addAll '--output', file('src/generated/resources/').getAbsolutePath()
-            programArguments.addAll '--existing', file('src/main/resources/').getAbsolutePath()
-        }
 
-
-        gameTestServer {
-            //type 'gameTestServer'
-            //server()
-            systemProperty('forge.enabledGameTestNamespaces', "eventwrapper")
-            systemProperty('forge.logging.console.level', 'debug')
+            jvmArgument("-XX:+AllowEnhancedClassRedefinition")
         }
-        */
 
         configureEach {
             gameDirectory = file('../run/')
             systemProperty('fml.earlyprogresswindow', 'false')
 
-            jvmArgument("-XX:+AllowEnhancedClassRedefinition")
-
+            programArguments.addAll("--username", "Dev")
+            programArguments.addAll("--uuid", "4f201c25-b473-4c2c-959a-dea681f79c23")
         }
     }
 
@@ -112,15 +94,14 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     modRuntimeOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
-    //modRuntimeOnly ("curse.maven:nbtedit-reborn-678133:5984630")
+}
 
-    compileOnly "org.jetbrains:annotations:24.0.1"
-    compileOnly "com.google.code.findbugs:jsr305:3.0.2"
-    compileOnly "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+sourceSets.main.java {
+    exclude 'io/github/lounode/eventwrapper/fabric/**'
+}
 
-    //implementation fileTree(dir: "${rootDir}/lib", include: ['*.jar'])
-    //implementation 'org.objenesis:objenesis:3.4'
-    //implementation files('libs/objenesis-3.4.jar')
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
 }
 
 compileJava {
@@ -130,10 +111,6 @@ compileJava {
 
 sourcesJar {
     from project(":common").sourceSets.main.allJava
-}
-
-sourceSets.main.resources {
-    srcDir 'src/generated/resources'
 }
 
 processResources {
@@ -178,7 +155,7 @@ jar {
     }
     finalizedBy 'reobfJar'
 }
-
+/*
 task apiJar(type: Jar, dependsOn: classes) {
     // Sources included because of MinecraftForge/ForgeGradle#369
     from project(":common").sourceSets.main.allJava
@@ -189,6 +166,7 @@ task apiJar(type: Jar, dependsOn: classes) {
 
     archiveClassifier = 'api'
 }
+ */
 
 publishing {
     publications {
@@ -198,7 +176,7 @@ publishing {
             version = project.version
             artifact jar
             artifact sourcesJar
-            artifact apiJar
+            //artifact apiJar
             pom.withXml {
                 def node = asNode()
                 if(node.dependencies.size() > 0)
