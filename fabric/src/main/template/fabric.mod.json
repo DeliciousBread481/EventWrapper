@@ -8,7 +8,11 @@
   "authors": [
     "Lounode"
   ],
-  "contact": {},
+  "contact": {
+    "issues": "https://github.com/Lounode/EventWrapper/issues",
+    "sources": "https://github.com/lounode/EventWrapper"
+  },
+  
 
   "license": "${mod_license}",
   "icon": "${mod_logo}",
