@@ -53,8 +53,8 @@ jobs:
 
       - name: Sign jars
         env:
-        SIGNING_KEY: ${{ secrets.LOUNODE_SIGN_KEY }}
-        SIGNING_PASSPHRASE: ${{ secrets.LOUNODE_SIGN_PASSPHRASE }}
+          SIGNING_KEY: ${{ secrets.LOUNODE_SIGN_KEY }}
+          SIGNING_PASSPHRASE: ${{ secrets.LOUNODE_SIGN_PASSPHRASE }}
         if: ${{ env.SIGNING_KEY != '' && env.SIGNING_PASSPHRASE != '' }}
         run: |
           echo "${SIGNING_KEY}" | gpg --batch --passphrase "${SIGNING_PASSPHRASE}" --import -
