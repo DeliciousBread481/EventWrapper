@@ -4,8 +4,7 @@ public enum LogicalSide {
     CLIENT,
     SERVER;
 
-    private LogicalSide() {
-    }
+    LogicalSide() {}
 
     public boolean isServer() {
         return !this.isClient();

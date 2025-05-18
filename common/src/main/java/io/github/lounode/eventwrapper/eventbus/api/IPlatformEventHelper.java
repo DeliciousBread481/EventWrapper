@@ -50,7 +50,9 @@ public interface IPlatformEventHelper {
     }
 
     static void syncEventData(Object from, Object to) {
-        if (from == null || to == null) return;
+        if (from == null || to == null) {
+            return;
+        }
 
         Class<?> fromClass = from.getClass();
         Class<?> toClass = to.getClass();
@@ -63,7 +65,9 @@ public interface IPlatformEventHelper {
             Class<?> type = fromField.getType();
 
 
-            if (!type.isPrimitive()) continue;
+            if (!type.isPrimitive()) {
+                continue;
+            }
 
             try {
                 Field toField = Arrays.stream(toFields).filter(field -> field.getName().equals(name)).findFirst().orElse(null);

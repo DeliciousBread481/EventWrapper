@@ -366,7 +366,7 @@ public class PlayerInteractEventWrapper extends PlayerEventWrapper{
             }
         }
 
-        public static enum Action {
+        public enum Action {
             /**
              * When the player first left clicks a block
              */

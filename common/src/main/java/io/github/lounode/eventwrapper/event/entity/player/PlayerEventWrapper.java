@@ -412,7 +412,9 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
          */
         public File getPlayerFile(String suffix)
         {
-            if ("dat".equals(suffix)) throw new IllegalArgumentException("The suffix 'dat' is reserved");
+            if ("dat".equals(suffix)) {
+                throw new IllegalArgumentException("The suffix 'dat' is reserved");
+            }
             return new File(this.getPlayerDirectory(), this.getPlayerUUID() +"."+suffix);
         }
 
@@ -477,7 +479,9 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
          */
         public File getPlayerFile(String suffix)
         {
-            if ("dat".equals(suffix)) throw new IllegalArgumentException("The suffix 'dat' is reserved");
+            if ("dat".equals(suffix)) {
+                throw new IllegalArgumentException("The suffix 'dat' is reserved");
+            }
             return new File(this.getPlayerDirectory(), this.getPlayerUUID() +"."+suffix);
         }
 

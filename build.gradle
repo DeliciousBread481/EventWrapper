@@ -12,13 +12,9 @@ subprojects {
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
     java.withSourcesJar()
-    //archivesBaseName = "${artifact_name}"
-
-
 
     repositories {
         mavenCentral()
-
         maven {
             name = 'Sponge / Mixin'
             url = 'https://repo.spongepowered.org/repository/maven-public/'
@@ -35,13 +31,13 @@ subprojects {
     }
 
     pmd {
-        toolVersion '7.13.0'
+        toolVersion = '7.13.0'
         incrementalAnalysis.set(true)
         ruleSetFiles = rootProject.files("spotless/pmd-ruleset.xml")
     }
 
     jar {
-        //from "LICENSE"
+        from "LICENSE"
 
         exclude "**/*.bat"
         exclude "**/*.psd"
@@ -62,6 +58,5 @@ subprojects {
             //importOrderFile rootProject.file('spotless/eclipse.importorder')
         }
     }
-
-     */
+    */
 }

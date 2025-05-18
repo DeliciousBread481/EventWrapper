@@ -22,6 +22,8 @@ public class LivingAttackEventPosterLocalPlayer {
 
         EventsWrapper.post(event);
 
-        if (event.isCanceled()) cir.setReturnValue(false);
+        if (event.isCanceled()) {
+            cir.setReturnValue(false);
+        }
     }
 }

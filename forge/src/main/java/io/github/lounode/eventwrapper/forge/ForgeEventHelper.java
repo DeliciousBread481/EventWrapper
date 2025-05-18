@@ -58,7 +58,7 @@ public class ForgeEventHelper implements IPlatformEventHelper {
 
         SubscribeEventWrapper annotation = method.getAnnotation(SubscribeEventWrapper.class);
         EventPriority priority = annotation != null ? EventPriority.valueOf(annotation.priority().name()) : EventPriority.NORMAL;
-        boolean receiveCanceled = annotation != null ? annotation.receiveCanceled() : false;
+        boolean receiveCanceled = annotation != null && annotation.receiveCanceled();
 
         MinecraftForge.EVENT_BUS.addListener(priority, receiveCanceled, forgeEventClass, event -> {
             try {

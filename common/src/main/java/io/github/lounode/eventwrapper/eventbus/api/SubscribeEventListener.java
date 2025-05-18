@@ -39,6 +39,7 @@ public final class SubscribeEventListener extends EventListener implements IWrap
         return subInfo.priority();
     }
 
+    @Override
     public String toString()
     {
         return readable;

@@ -69,7 +69,9 @@ public class ListenerList {
      * Automatically rebuilds the internal Array cache if its information is out of date.
      */
     public EventListener[] getListeners() {
-        if (shouldRebuild()) buildCache();
+        if (shouldRebuild()) {
+            buildCache();
+        }
         return listeners.get();
     }
 
@@ -78,7 +80,9 @@ public class ListenerList {
             throw new IllegalStateException("buildPerPhaseList is false!");
         }
 
-        if (shouldRebuild()) buildCache();
+        if (shouldRebuild()) {
+            buildCache();
+        }
         return perPhaseListeners.get()[phase.ordinal()];
     }
 
@@ -90,15 +94,17 @@ public class ListenerList {
         this.rebuild = true;
         if (this.children != null) {
             synchronized (this.children) {
-                for (ListenerList child : this.children)
+                for (ListenerList child : this.children){
                     child.forceRebuild();
+                }
             }
         }
     }
 
     private void addChild(ListenerList child) {
-        if (this.children == null)
+        if (this.children == null){
             this.children = Collections.synchronizedList(new ArrayList<>(2));
+        }
         this.children.add(child);
     }
 

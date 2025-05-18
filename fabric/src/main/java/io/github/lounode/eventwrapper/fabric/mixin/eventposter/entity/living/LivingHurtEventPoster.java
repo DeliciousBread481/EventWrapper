@@ -22,7 +22,9 @@ public class LivingHurtEventPoster {
 
         EventsWrapper.post(event);
 
-        if (event.isCanceled()) return 0;
+        if (event.isCanceled()) {
+            return 0;
+        }
 
         return event.getAmount();
     }

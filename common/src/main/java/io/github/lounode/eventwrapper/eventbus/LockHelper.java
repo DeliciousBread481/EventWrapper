@@ -64,9 +64,9 @@ public class LockHelper<K,V> {
     public <I> V computeIfAbsent(K key, Function<K, I> factory, Function<I, V> finalizer) {
         // Try lock-free get first
         var ret = get(key);
-        if (ret != null)
+        if (ret != null){
             return ret;
-
+        }
         // Let's pre-compute our new value. This could take a while, as well as recursively call this
         // function. as such, we need to make sure we don't hold a lock when we do this, otherwise
         // we could conflict with the class init global lock that is implicitly present

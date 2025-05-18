@@ -40,8 +40,7 @@ public class EventBus implements IEventExceptionHandler, IEventBus{
     }
 
     private EventBus(final IEventExceptionHandler handler, boolean startShutdown, IEventClassChecker classChecker, boolean checkTypesOnDispatch, boolean allowPerPhasePost) {
-        if (handler == null) exceptionHandler = this;
-        else exceptionHandler = handler;
+        this.exceptionHandler = Objects.requireNonNullElse(handler, this);
         this.shutdown = startShutdown;
         this.classChecker = classChecker;
         this.checkTypesOnDispatch = checkTypesOnDispatch || checkTypesOnDispatchProperty;
@@ -212,10 +211,11 @@ public class EventBus implements IEventExceptionHandler, IEventBus{
 
     private <T extends EventWrapper> void addListener(final EventPriority priority, @Nullable Predicate<? super T> filter, final Consumer<T> consumer) {
         Class<T> eventClass = getEventClass(consumer);
-        if (Objects.equals(eventClass, EventWrapper.class))
+        if (Objects.equals(eventClass, EventWrapper.class)) {
             LOGGER.warn(EVENTBUS,"Attempting to add a Lambda listener with computed generic type of Event. " +
                     "Are you sure this is what you meant? NOTE : there are complex lambda forms where " +
                     "the generic type information is erased and cannot be recovered at runtime.");
+        }
         addListener(priority, filter, eventClass, consumer);
     }
     @SuppressWarnings("unchecked")
@@ -281,8 +281,9 @@ public class EventBus implements IEventExceptionHandler, IEventBus{
     public void unregister(Object object)
     {
         List<EventListener> list = listeners.remove(object);
-        if(list == null)
+        if(list == null){
             return;
+        }
         for (ListenerList listenerList : listenerLists.getReadMap().values()) {
             for (EventListener listener : list) {
                 listenerList.unregister(listener);

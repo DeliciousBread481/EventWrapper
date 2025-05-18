@@ -21,8 +21,9 @@ public class EventListenerHelper {
     }
 
     private static boolean hasAnnotation(Class<?> eventClass, Class<? extends Annotation> annotation, LockHelper<Class<?>, Boolean> lock) {
-        if (eventClass == EventWrapper.class)
+        if (eventClass == EventWrapper.class){
             return false;
+        }
 
         return lock.computeIfAbsent(eventClass, () -> {
             var parent = eventClass.getSuperclass();

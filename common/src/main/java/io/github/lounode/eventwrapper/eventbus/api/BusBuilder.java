@@ -6,7 +6,7 @@ import io.github.lounode.eventwrapper.eventbus.BusBuilderImpl;
  * Build a bus
  */
 public interface BusBuilder {
-    public static BusBuilder builder() {
+    static BusBuilder builder() {
         return new BusBuilderImpl();
     }
 
@@ -14,7 +14,9 @@ public interface BusBuilder {
     BusBuilder startShutdown();
     BusBuilder checkTypesOnDispatch();
     default BusBuilder markerType(Class<?> markerInterface) {
-        if (!markerInterface.isInterface()) throw new IllegalArgumentException("Cannot specify a class marker type");
+        if (!markerInterface.isInterface()) {
+            throw new IllegalArgumentException("Cannot specify a class marker type");
+        }
         return classChecker(eventType -> {
             if (!markerInterface.isAssignableFrom(eventType)) {
                 throw new IllegalArgumentException("This bus only accepts subclasses of " + markerInterface + ", which " + eventType + " is not.");

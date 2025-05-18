@@ -52,8 +52,9 @@ public class LockHelper<K,V> {
         readLock.unlock();
 
         // If the map had a value, return it.
-        if (ret != null)
+        if (ret != null){
             return ret;
+        }
 
         // Let's pre-compute our new value. This could take a while, as well as recursively call this
         // function. as such, we need to make sure we don't hold a lock when we do this, otherwise

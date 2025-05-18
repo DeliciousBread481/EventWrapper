@@ -35,7 +35,9 @@ public class AutoEventSubscriberRegistryFabric {
                         .forEach(classFile -> {
                             String className = convertToClassName(rootPath, classFile);
 
-                            if (!ENABLED && className.startsWith(testPackage)) return;
+                            if (!ENABLED && className.startsWith(testPackage)) {
+                                return;
+                            }
 
                             try (InputStream is = Files.newInputStream(classFile)) {
                                 ClassReader reader = new ClassReader(is);

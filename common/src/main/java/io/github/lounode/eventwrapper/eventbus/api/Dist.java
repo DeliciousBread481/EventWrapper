@@ -4,8 +4,7 @@ public enum Dist {
     CLIENT,
     DEDICATED_SERVER;
 
-    private Dist() {
-    }
+    Dist() {}
 
     public boolean isDedicatedServer() {
         return !this.isClient();

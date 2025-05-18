@@ -37,7 +37,9 @@ public class AutoRegisterGameTest {
                         .forEach(classFile -> {
                             String className = convertToClassName(rootPath, classFile);
 
-                            if (!className.startsWith(targetPackage)) return;
+                            if (!className.startsWith(targetPackage)) {
+                                return;
+                            }
 
                             try (InputStream is = Files.newInputStream(classFile)) {
                                 ClassReader reader = new ClassReader(is);

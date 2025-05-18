@@ -19,7 +19,7 @@ import java.util.Objects;
  * custom projectiles should fire this event and check the result in a similar fashion.
  * This event is cancelable. When canceled, the impact will not be processed and the projectile will continue flying.
  * Killing or other handling of the entity after event cancellation is up to the modder.
- * You can also directly set the {@link ProjectileImpactEvent.ImpactResult} to change the impact behaviour.
+ * You can also directly set the {@link ProjectileImpactEventWrapper.ImpactResult} to change the impact behaviour.
  * @see #setImpactResult(ProjectileImpactEventWrapper.ImpactResult)
  */
 @Cancelable
@@ -46,6 +46,7 @@ public class ProjectileImpactEventWrapper extends EntityEventWrapper {
      * @deprecated Use {@link #setImpactResult(ProjectileImpactEventWrapper.ImpactResult)} instead.
      */
     @Deprecated(forRemoval = true, since = "1.20.1")
+    @Override
     public void setCanceled(boolean cancel)
     {
         super.setCanceled(cancel);

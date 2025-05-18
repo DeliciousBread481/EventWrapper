@@ -117,7 +117,9 @@ public abstract class EventWrapper {
     {
         Objects.requireNonNull(value, "setPhase argument must not be null");
         int prev = phase == null ? -1 : phase.ordinal();
-        if (prev >= value.ordinal()) throw new IllegalArgumentException("Attempted to set event phase to "+ value +" when already "+ phase);
+        if (prev >= value.ordinal()) {
+            throw new IllegalArgumentException("Attempted to set event phase to "+ value +" when already "+ phase);
+        }
         phase = value;
     }
 
