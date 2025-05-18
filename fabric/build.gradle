@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-archivesBaseName =  mod_id + "-" + archivesBaseName
+base.archivesName = mod_id + "-" + "fabric"
 version = "${minecraft_version}-${mod_version}"
 
 if (System.getenv().RELEASE_MODE != "1") {
@@ -202,13 +202,10 @@ afterEvaluate {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId mod_group_id
-            artifactId project.archivesBaseName
-            version project.version
+            groupId = mod_group_id
+            artifactId = base.archivesName.get()
+            version = project.version
             from components.java
-
-            //println "将发布到: ${groupId}:${artifactId}:${version}"
-            //println "本地仓库路径: ${System.properties['user.home']}/.m2/repository"
         }
     }
 

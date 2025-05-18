@@ -4,7 +4,7 @@ plugins {
     //id 'fabric-loom' version '1.10-SNAPSHOT'
 }
 
-archivesBaseName =  mod_id + "-" + archivesBaseName
+base.archivesName = mod_id + "-" + "common"
 version = "${minecraft_version}-${mod_version}"
 if (System.getenv().RELEASE_MODE == null) {
     version += '-SNAPSHOT'
@@ -127,13 +127,10 @@ sourceSets.main.resources.srcDir generateModMetadataXplat
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId mod_group_id
-            artifactId project.archivesBaseName
-            version project.version
+            groupId = mod_group_id
+            artifactId = base.archivesName.get()
+            version = project.version
             from components.java
-
-            //println "将发布到: ${groupId}:${artifactId}:${version}"
-            //println "本地仓库路径: ${System.properties['user.home']}/.m2/repository"
         }
     }
     repositories {

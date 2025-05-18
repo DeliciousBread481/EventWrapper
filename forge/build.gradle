@@ -4,7 +4,7 @@ plugins {
     id 'net.neoforged.moddev.legacyforge' version '2.0.78'
 }
 
-archivesBaseName =  mod_id + "-" + archivesBaseName
+base.archivesName = mod_id + "-" + "forge"
 version = "${minecraft_version}-${mod_version}"
 
 if (System.getenv().RELEASE_MODE != "1") {
@@ -193,9 +193,9 @@ task apiJar(type: Jar, dependsOn: classes) {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId mod_group_id
-            artifactId project.archivesBaseName
-            version project.version
+            groupId = mod_group_id
+            artifactId = base.archivesName.get()
+            version = project.version
             artifact jar
             artifact sourcesJar
             artifact apiJar
@@ -204,9 +204,6 @@ publishing {
                 if(node.dependencies.size() > 0)
                     node.remove(node.dependencies) // Remove deps, as they are all mappings-dependent and/or forge
             }
-
-            //println "将发布到: ${groupId}:${artifactId}:${version}"
-            //println "本地仓库路径: ${System.properties['user.home']}/.m2/repository"
         }
     }
 
