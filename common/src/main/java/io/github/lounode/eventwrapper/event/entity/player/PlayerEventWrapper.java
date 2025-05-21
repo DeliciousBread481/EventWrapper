@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +24,7 @@ import java.io.File;
 import java.util.Optional;
 
 import io.github.lounode.eventwrapper.event.entity.living.LivingEventWrapper;
+import io.github.lounode.eventwrapper.eventbus.api.Cancelable;
 
 /**
  * PlayerEvent is fired whenever an event involving a {@link Player} occurs. <br>

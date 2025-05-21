@@ -5,13 +5,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 import org.jetbrains.annotations.Nullable;
 
 
 import io.github.lounode.eventwrapper.event.entity.EntityEventWrapper;
+import io.github.lounode.eventwrapper.eventbus.api.Cancelable;
 
 /**
  * LivingEvent is fired whenever an event involving a {@link LivingEntity} occurs.<br>
