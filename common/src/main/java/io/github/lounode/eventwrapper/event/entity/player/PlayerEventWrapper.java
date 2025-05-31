@@ -143,6 +143,8 @@ public abstract class PlayerEventWrapper extends LivingEventWrapper {
 
 		public BreakSpeed(PlayerEvent.BreakSpeed event) {
 			this(event.getEntity(), event.getState(), event.getOriginalSpeed(), event.getPosition().isPresent() ? event.getPosition().get() : null);
+			//fix not update new BreakSpeed
+			this.setNewSpeed(event.getNewSpeed());
 		}
 
 		public BlockState getState() {
