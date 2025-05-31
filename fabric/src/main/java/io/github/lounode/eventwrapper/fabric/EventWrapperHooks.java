@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 
 import io.github.lounode.eventwrapper.EventsWrapper;
+import io.github.lounode.eventwrapper.event.entity.player.AnvilRepairEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.EntityItemPickupEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.PlayerEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.PlayerInteractEventWrapper;
@@ -226,5 +227,11 @@ public class EventWrapperHooks {
 
 	public static void onServerAboutToStart(MinecraftServer minecraftServer) {
 		EventsWrapper.post(new ServerAboutToStartEventWrapper(minecraftServer));
+	}
+
+	public static float onAnvilRepair(Player player, @NotNull ItemStack output, @NotNull ItemStack left, @NotNull ItemStack right) {
+		AnvilRepairEventWrapper e = new AnvilRepairEventWrapper(player, left, right, output);
+		EventsWrapper.post(e);
+		return e.getBreakChance();
 	}
 }

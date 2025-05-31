@@ -17,6 +17,7 @@
     "eventposter.entity.living.MobEffectEventPoster",
     "eventposter.entity.living.MobEffectEventPosterApplicable",
     "eventposter.entity.living.MobEffectEventPosterExpired",
+    "eventposter.entity.player.AnvilRepairEventPoster",
     "eventposter.entity.player.AttackEntityEventPoster",
     "eventposter.entity.player.playerevent.PlayerEventBreakSpeedEventPoster",
     "eventposter.entity.player.playerevent.PlayerEventChangedDimensionEventPoster",
