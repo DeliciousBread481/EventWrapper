@@ -1,5 +1,14 @@
 package io.github.lounode.eventwrapper.fabric;
 
+import io.github.lounode.eventwrapper.EventsWrapper;
+import io.github.lounode.eventwrapper.event.entity.living.MobEffectEventWrapper;
+import io.github.lounode.eventwrapper.event.entity.player.AnvilRepairEventWrapper;
+import io.github.lounode.eventwrapper.event.entity.player.EntityItemPickupEventWrapper;
+import io.github.lounode.eventwrapper.event.entity.player.PlayerEventWrapper;
+import io.github.lounode.eventwrapper.event.entity.player.PlayerInteractEventWrapper;
+import io.github.lounode.eventwrapper.event.furnace.FurnaceFuelBurnTimeEventWrapper;
+import io.github.lounode.eventwrapper.event.server.*;
+import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl;
 import net.minecraft.core.BlockPos;
@@ -11,7 +20,9 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -24,20 +35,10 @@ import net.minecraft.world.level.storage.PlayerDataStorage;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-
-import io.github.lounode.eventwrapper.EventsWrapper;
-import io.github.lounode.eventwrapper.event.entity.player.AnvilRepairEventWrapper;
-import io.github.lounode.eventwrapper.event.entity.player.EntityItemPickupEventWrapper;
-import io.github.lounode.eventwrapper.event.entity.player.PlayerEventWrapper;
-import io.github.lounode.eventwrapper.event.entity.player.PlayerInteractEventWrapper;
-import io.github.lounode.eventwrapper.event.furnace.FurnaceFuelBurnTimeEventWrapper;
-import io.github.lounode.eventwrapper.event.server.*;
-import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
 
 public class EventWrapperHooks {
 
@@ -233,5 +234,9 @@ public class EventWrapperHooks {
 		AnvilRepairEventWrapper e = new AnvilRepairEventWrapper(player, left, right, output);
 		EventsWrapper.post(e);
 		return e.getBreakChance();
+	}
+
+	public static void onMobEffectExpired(LivingEntity entity, MobEffectInstance mobEffectInstance) {
+		EventsWrapper.post(new MobEffectEventWrapper.Expired(entity, mobEffectInstance));
 	}
 }

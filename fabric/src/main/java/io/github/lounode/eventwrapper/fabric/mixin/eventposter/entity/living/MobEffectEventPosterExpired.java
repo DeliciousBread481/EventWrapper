@@ -11,8 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 
-import io.github.lounode.eventwrapper.EventsWrapper;
-import io.github.lounode.eventwrapper.event.entity.living.MobEffectEventWrapper;
+import io.github.lounode.eventwrapper.fabric.EventWrapperHooks;
 
 @Mixin(LivingEntity.class)
 public class MobEffectEventPosterExpired {
@@ -24,6 +23,6 @@ public class MobEffectEventPosterExpired {
 		)
 	)
 	private void onExpired(CallbackInfo ci, @Local MobEffectInstance mobEffect) {
-		EventsWrapper.post(new MobEffectEventWrapper.Expired((LivingEntity) (Object) this, mobEffect));
+		EventWrapperHooks.onMobEffectExpired((LivingEntity) (Object) this, mobEffect);
 	}
 }
