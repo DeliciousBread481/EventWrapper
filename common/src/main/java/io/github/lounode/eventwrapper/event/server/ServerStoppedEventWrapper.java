@@ -3,6 +3,10 @@ package io.github.lounode.eventwrapper.event.server;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
+
+
+import io.github.lounode.xplatform.platform.Platform;
+import io.github.lounode.xplatform.platform.support.SupportPlatform;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -17,6 +21,7 @@ public class ServerStoppedEventWrapper extends ServerLifecycleEventWrapper {
 		super(server);
 	}
 
+	@SupportPlatform(Platform.FORGE)
 	public ServerStoppedEventWrapper(ServerStoppedEvent event) {
 		this(event.getServer());
 	}
@@ -25,6 +30,7 @@ public class ServerStoppedEventWrapper extends ServerLifecycleEventWrapper {
 		return ServerStoppedEvent.class;
 	}
 
+	@SupportPlatform(Platform.FORGE)
 	@Override
 	public Object toForgeEvent() {
 		return new ServerStoppedEvent(getServer());

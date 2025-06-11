@@ -4,6 +4,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
+
+
+import io.github.lounode.xplatform.platform.Platform;
+import io.github.lounode.xplatform.platform.support.SupportPlatform;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -19,6 +23,7 @@ public class ServerStartingEventWrapper extends ServerLifecycleEventWrapper {
 		super(server);
 	}
 
+	@SupportPlatform(Platform.FORGE)
 	public ServerStartingEventWrapper(ServerStartingEvent event) {
 		this(event.getServer());
 	}
@@ -27,6 +32,7 @@ public class ServerStartingEventWrapper extends ServerLifecycleEventWrapper {
 		return ServerStartingEvent.class;
 	}
 
+	@SupportPlatform(Platform.FORGE)
 	@Override
 	public Object toForgeEvent() {
 		return new ServerStartingEvent(getServer());

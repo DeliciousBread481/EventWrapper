@@ -6,6 +6,10 @@ import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 
+
+import io.github.lounode.xplatform.platform.Platform;
+import io.github.lounode.xplatform.platform.support.SupportPlatform;
+
 /**
  * Called before the server begins loading anything. Called after {@link InterModProcessEvent} on the dedicated
  * server, and after the player has hit "Play Selected World" in the client. Called before {@link ServerStartingEvent}.
@@ -20,6 +24,7 @@ public class ServerAboutToStartEventWrapper extends ServerLifecycleEventWrapper 
 		super(server);
 	}
 
+	@SupportPlatform(Platform.FORGE)
 	public ServerAboutToStartEventWrapper(ServerAboutToStartEvent event) {
 		this(event.getServer());
 	}
@@ -28,6 +33,7 @@ public class ServerAboutToStartEventWrapper extends ServerLifecycleEventWrapper 
 		return ServerAboutToStartEvent.class;
 	}
 
+	@SupportPlatform(Platform.FORGE)
 	@Override
 	public Object toForgeEvent() {
 		return new ServerAboutToStartEvent(getServer());

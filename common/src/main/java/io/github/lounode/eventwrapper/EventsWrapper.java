@@ -23,4 +23,8 @@ public class EventsWrapper {
 	public static <T extends EventWrapper> T post(T event) {
 		return getInstance().helper.post(event);
 	}
+
+	public IPlatformEventHelper getHelper() {
+		return helper;
+	}
 }

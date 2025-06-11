@@ -1,15 +1,14 @@
 package io.github.lounode.eventwrapper.eventbus.api;
 
-import net.minecraftforge.eventbus.api.Event;
+import io.github.lounode.eventwrapper.event.ServiceUtil;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import io.github.lounode.eventwrapper.event.ServiceUtil;
 
 public interface IPlatformEventHelper {
 	String forgePackageNamePrefix = "net.minecraftforge";
@@ -26,29 +25,6 @@ public interface IPlatformEventHelper {
 	}
 
 	//TODO 自动推导forge类型 类生成
-	static Class<? extends Event> getForgeEventClass(Class<? extends EventWrapper> wrapperClass) {
-		String wrapperFullName = wrapperClass.getName();
-		if (wrapperFullName.contains("Wrapper")) {
-			try {
-				String forgeClassName = wrapperFullName.replace("Wrapper", "");
-
-				forgeClassName = forgeClassName.replace("io.github.lounode.eventwrapper", forgePackageNamePrefix);
-
-				@SuppressWarnings("unchecked")
-				Class<? extends Event> forgeClass = (Class<? extends Event>) Class.forName(forgeClassName);
-				return forgeClass;
-			} catch (ClassNotFoundException ignored) {}
-		}
-
-		try {
-			Method getForgeClassMethod = wrapperClass.getMethod("getForgeClass");
-			@SuppressWarnings("unchecked")
-			Class<? extends Event> forgeClass = (Class<? extends Event>) getForgeClassMethod.invoke(null);
-			return forgeClass;
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Failed to get forge class from wrapper: " + wrapperClass.getName(), e);
-		}
-	}
 
 	static void syncEventData(Object from, Object to) {
 		if (from == null || to == null) {
@@ -102,4 +78,8 @@ public interface IPlatformEventHelper {
 	}
 
 	<T extends EventWrapper> T post(T event);
+
+	default boolean isCorrectToolForDrops(BlockState state, Player player) {
+		return false;
+	}
 }

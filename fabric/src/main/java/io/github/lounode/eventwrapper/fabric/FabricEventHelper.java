@@ -1,5 +1,8 @@
 package io.github.lounode.eventwrapper.fabric;
 
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
+
 
 import io.github.lounode.eventwrapper.EventsWrapper;
 import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
@@ -19,5 +22,10 @@ public class FabricEventHelper implements IPlatformEventHelper {
 	@Override
 	public <T extends EventWrapper> T post(T event) {
 		return EventsWrapper.WRAPPER_EVENT_BUS.post(event);
+	}
+
+	@Override
+	public boolean isCorrectToolForDrops(BlockState state, Player player) {
+		return EventWrapperHooks.isCorrectToolForDrops(state, player);
 	}
 }

@@ -12,9 +12,14 @@ import java.util.Objects;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import io.github.lounode.xplatform.platform.Platform;
+import io.github.lounode.xplatform.platform.support.CrossPlatform;
+import io.github.lounode.xplatform.platform.support.SupportPlatform;
+
 /**
  * Forge Event Wrapper
  */
+@CrossPlatform
 public abstract class EventWrapper {
 
 	@Retention(value = RUNTIME)
@@ -124,10 +129,12 @@ public abstract class EventWrapper {
 	 * 
 	 * @return Forge Event class
 	 */
+	@SupportPlatform(Platform.FORGE)
 	public static Class<? extends Event> getForgeClass() {
 		return Event.class;
 	}
 
+	@SupportPlatform(Platform.FORGE)
 	public Object toForgeEvent() {
 		return new Event();
 	}

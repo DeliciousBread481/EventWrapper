@@ -3,6 +3,11 @@ package io.github.lounode.eventwrapper.event.server;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
+
+
+import io.github.lounode.xplatform.platform.Platform;
+import io.github.lounode.xplatform.platform.support.CrossPlatform;
+import io.github.lounode.xplatform.platform.support.SupportPlatform;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -10,11 +15,13 @@ import net.minecraftforge.eventbus.api.Event;
  *
  * @author cpw
  */
+@CrossPlatform
 public class ServerStoppingEventWrapper extends ServerLifecycleEventWrapper {
 	public ServerStoppingEventWrapper(MinecraftServer server) {
 		super(server);
 	}
 
+	@SupportPlatform(Platform.FORGE)
 	public ServerStoppingEventWrapper(ServerStoppingEvent event) {
 		this(event.getServer());
 	}
@@ -23,6 +30,7 @@ public class ServerStoppingEventWrapper extends ServerLifecycleEventWrapper {
 		return ServerStoppingEvent.class;
 	}
 
+	@SupportPlatform(Platform.FORGE)
 	@Override
 	public Object toForgeEvent() {
 		return new ServerStoppingEvent(getServer());

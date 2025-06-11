@@ -2,10 +2,12 @@ package io.github.lounode.eventwrapper.event.server;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.server.ServerLifecycleEvent;
-import net.minecraftforge.eventbus.api.Event;
 
 
 import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
+import io.github.lounode.xplatform.platform.Platform;
+import io.github.lounode.xplatform.platform.support.SupportPlatform;
+import net.minecraftforge.eventbus.api.Event;
 
 public class ServerLifecycleEventWrapper extends EventWrapper {
 
@@ -19,6 +21,7 @@ public class ServerLifecycleEventWrapper extends EventWrapper {
 		return server;
 	}
 
+	@SupportPlatform(Platform.FORGE)
 	public ServerLifecycleEventWrapper(ServerLifecycleEvent event) {
 		this(event.getServer());
 	}
@@ -27,6 +30,7 @@ public class ServerLifecycleEventWrapper extends EventWrapper {
 		return ServerLifecycleEvent.class;
 	}
 
+	@SupportPlatform(Platform.FORGE)
 	@Override
 	public Object toForgeEvent() {
 		return new ServerLifecycleEvent(getServer());

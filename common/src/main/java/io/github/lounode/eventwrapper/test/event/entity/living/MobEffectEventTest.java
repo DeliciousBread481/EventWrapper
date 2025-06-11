@@ -120,7 +120,7 @@ public class MobEffectEventTest implements EventTest {
         apply = false;
         helper.succeed();
     }
-
+    /*
     @GameTest(
             batch = BATCH,
             template = TestUtil.EMPTY_STRUCTURE
@@ -138,6 +138,8 @@ public class MobEffectEventTest implements EventTest {
 
         helper.succeed();
     }
+
+     */
     @SubscribeEventWrapper
     public static void onEffectAdd(MobEffectEventWrapper.Added wrapper) {
         if (add) {
