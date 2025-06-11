@@ -1,8 +1,10 @@
 package io.github.lounode.eventwrapper.forge.event.converter.server;
 
+import net.minecraftforge.event.server.ServerStoppedEvent;
+
+
 import io.github.lounode.eventwrapper.event.server.ServerStoppedEventWrapper;
 import io.github.lounode.eventwrapper.forge.event.converter.ForgeEventConverter;
-import net.minecraftforge.event.server.ServerStoppedEvent;
 
 public class ServerStoppedEventConverter implements ForgeEventConverter<ServerStoppedEvent, ServerStoppedEventWrapper> {
 	@Override

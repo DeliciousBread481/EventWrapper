@@ -1,6 +1,5 @@
 package io.github.lounode.eventwrapper.eventbus.api;
 
-import io.github.lounode.eventwrapper.event.ServiceUtil;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -9,6 +8,8 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import io.github.lounode.eventwrapper.event.ServiceUtil;
 
 public interface IPlatformEventHelper {
 	String forgePackageNamePrefix = "net.minecraftforge";

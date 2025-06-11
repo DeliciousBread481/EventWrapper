@@ -46,8 +46,6 @@ public class BlockSnapshot {
 
 		this.level = new WeakReference<>(level);
 
-		if (DEBUG)
-			System.out.println("Created " + this.toString());
 	}
 
 	public static BlockSnapshot create(ResourceKey<Level> dim, LevelAccessor world, BlockPos pos) {
@@ -73,7 +71,7 @@ public class BlockSnapshot {
 		LevelAccessor world = this.level != null ? this.level.get() : null;
 		if (world == null) {
 			world = ServerLifecycleHooks.getCurrentServer().getLevel(this.dim);
-			this.level = new WeakReference<LevelAccessor>(world);
+			this.level = new WeakReference<>(world);
 		}
 		return world;
 	}
@@ -106,15 +104,17 @@ public class BlockSnapshot {
 		int flags = notifyNeighbors ? Block.UPDATE_ALL : Block.UPDATE_CLIENTS;
 
 		if (current != replaced) {
-			if (force)
+			if (force) {
 				world.setBlock(pos, replaced, flags);
-			else
+			} else {
 				return false;
+			}
 		}
 
 		world.setBlock(pos, replaced, flags);
-		if (world instanceof Level)
+		if (world instanceof Level) {
 			((Level) world).sendBlockUpdated(pos, current, replaced, flags);
+		}
 
 		BlockEntity te = null;
 		if (getTag() != null) {
@@ -125,17 +125,17 @@ public class BlockSnapshot {
 			}
 		}
 
-		if (DEBUG)
-			System.out.println("Restored " + this.toString());
 		return true;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
-		if (obj == null || getClass() != obj.getClass())
+		}
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
+		}
 
 		final BlockSnapshot other = (BlockSnapshot) obj;
 		return this.dim.equals(other.dim) &&

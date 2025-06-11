@@ -2,6 +2,17 @@ package io.github.lounode.eventwrapper.forge.event;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+
+import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.player.*;
+import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
+import net.minecraftforge.event.server.*;
+import net.minecraftforge.eventbus.api.Event;
+
+import org.jetbrains.annotations.Nullable;
+
+
 import io.github.lounode.eventwrapper.event.entity.EntityEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.living.*;
 import io.github.lounode.eventwrapper.event.entity.player.*;
@@ -17,13 +28,6 @@ import io.github.lounode.eventwrapper.forge.event.converter.furnace.FurnaceFuelB
 import io.github.lounode.eventwrapper.forge.event.converter.server.*;
 import io.github.lounode.eventwrapper.forge.event.entity.player.ItemCooldownFinishEvent;
 import io.github.lounode.eventwrapper.forge.event.entity.player.ItemCooldownStartEvent;
-import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.entity.living.*;
-import net.minecraftforge.event.entity.player.*;
-import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
-import net.minecraftforge.event.server.*;
-import net.minecraftforge.eventbus.api.Event;
-import org.jetbrains.annotations.Nullable;
 
 public class ForgeEventMappings {
 	private static final BiMap<Class<? extends Event>, Class<? extends EventWrapper>> MAPPINGS = HashBiMap.create();

@@ -4,11 +4,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.Event;
 
 
 import io.github.lounode.xplatform.platform.Platform;
 import io.github.lounode.xplatform.platform.support.SupportPlatform;
-import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Called after {@link ServerAboutToStartEvent} and before {@link ServerStartedEvent}.

@@ -3,11 +3,11 @@ package io.github.lounode.eventwrapper.event.server;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
+import net.minecraftforge.eventbus.api.Event;
 
 
 import io.github.lounode.xplatform.platform.Platform;
 import io.github.lounode.xplatform.platform.support.SupportPlatform;
-import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Called after {@link ServerStoppingEvent} when the server has completely shut down.

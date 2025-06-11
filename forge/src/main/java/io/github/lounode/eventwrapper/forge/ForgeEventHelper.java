@@ -1,10 +1,5 @@
 package io.github.lounode.eventwrapper.forge;
 
-import io.github.lounode.eventwrapper.eventbus.api.EventConverter;
-import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
-import io.github.lounode.eventwrapper.eventbus.api.IPlatformEventHelper;
-import io.github.lounode.eventwrapper.eventbus.api.SubscribeEventWrapper;
-import io.github.lounode.eventwrapper.forge.event.ForgeEventMappings;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
@@ -14,6 +9,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,6 +18,12 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.stream.Stream;
+
+import io.github.lounode.eventwrapper.eventbus.api.EventConverter;
+import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
+import io.github.lounode.eventwrapper.eventbus.api.IPlatformEventHelper;
+import io.github.lounode.eventwrapper.eventbus.api.SubscribeEventWrapper;
+import io.github.lounode.eventwrapper.forge.event.ForgeEventMappings;
 
 public class ForgeEventHelper implements IPlatformEventHelper {
 
@@ -34,7 +36,7 @@ public class ForgeEventHelper implements IPlatformEventHelper {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <T extends EventWrapper> T post(T event) {
 		EventConverter converter = ForgeEventMappings.getConverter(event.getClass());
 
@@ -46,23 +48,23 @@ public class ForgeEventHelper implements IPlatformEventHelper {
 		Event forgeEvent = (Event) converter.toEvent(event);
 
 		/*
-
+		
 		if (!(forgeEvent instanceof ForgeEventExtension extension)) {
 			LOGGER.error("Event extension does not existed: {}", forgeEvent.getClass());
 			return event;
 		}
-
+		
 		extension.EventWrapper_setEventWrapper(event);
-
-		 */
+		
+		*/
 		track(forgeEvent, event);
 
 		MinecraftForge.EVENT_BUS.post(forgeEvent);
 
-				/*
+		/*
 		Event forgeEvent = (Event) event.toForgeEvent();
 		track(forgeEvent, event);
-
+		
 		//Because Wrapper -> ForgeEvent -> ForgeBus
 		//The reference will lose during translation
 		//So we use a WeakHashMap to keep additional reference
@@ -71,8 +73,8 @@ public class ForgeEventHelper implements IPlatformEventHelper {
 		MinecraftForge.EVENT_BUS.post(forgeEvent);
 		//Anti-GC
 		holder[0] = null;
-
-				 */
+		
+		*/
 
 		return event;
 	}
@@ -101,6 +103,7 @@ public class ForgeEventHelper implements IPlatformEventHelper {
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void registerListener(Object target, Method method) {
 		Class<?>[] params = method.getParameterTypes();
 		if (params.length != 1) {
@@ -119,7 +122,6 @@ public class ForgeEventHelper implements IPlatformEventHelper {
 			LOGGER.error("Can't find the converter: {}", wrapperClass);
 			return;
 		}
-
 
 		Class<? extends Event> forgeEventClass = ForgeEventMappings.getForgeEventClass(wrapperClass);
 
@@ -140,49 +142,48 @@ public class ForgeEventHelper implements IPlatformEventHelper {
 					LOGGER.error("Event extension does not existed: {}", event.getClass());
 					return;
 				}
-
-				 */
+				
+				*/
 
 				wrapper = converter.toWrapper(event);
 
 				/*
-
+				
 				if (extension.EventWrapper_getEventWrapper() != null) {
 					extension.EventWrapper_setEventWrapper(wrapper);
 				}
-
-				 */
+				
+				*/
 				if (FORGE_EVENT_TRACKER_MAP.containsKey(event)) {
 					wrapper = FORGE_EVENT_TRACKER_MAP.get(event);
 					IPlatformEventHelper.syncEventData(event, wrapper);
 				}
-
 
 				method.setAccessible(true);
 				method.invoke(target, wrapper);
 
 				IPlatformEventHelper.syncEventData(wrapper, event);
 				/*
-
+				
 				Constructor<?> ctor = wrapperClass.getConstructor(forgeEventClass);
-
+				
 				EventWrapper wrapperEvent;
 				wrapperEvent = getWrapper(event);
-
+				
 				if (wrapperEvent == null) {
 					wrapperEvent = (EventWrapper) ctor.newInstance(event);
 				}
-
+				
 				EventConverter converter = ForgeEventMappings.getConverter(wrapperEvent.getClass());
 				if (converter != null) {
 					wrapperEvent = converter.toWrapper(event);
 				}
-
+				
 				method.setAccessible(true);
 				method.invoke(target, wrapperEvent);
 				IPlatformEventHelper.syncEventData(wrapperEvent, event);
-
-				 */
+				
+				*/
 			} catch (Exception e) {
 				throw new RuntimeException("Event call Error!", e);
 			}

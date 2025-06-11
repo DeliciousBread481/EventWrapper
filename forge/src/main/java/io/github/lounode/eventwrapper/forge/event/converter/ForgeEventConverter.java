@@ -2,10 +2,11 @@ package io.github.lounode.eventwrapper.forge.event.converter;
 
 import net.minecraftforge.eventbus.api.Event;
 
+import org.jetbrains.annotations.Nullable;
+
 
 import io.github.lounode.eventwrapper.eventbus.api.EventConverter;
 import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
-import org.jetbrains.annotations.Nullable;
 
 public interface ForgeEventConverter<E extends Event, W extends EventWrapper> extends EventConverter<E, W> {
 	@Override

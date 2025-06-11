@@ -8,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -92,9 +93,10 @@ public class BlockEventWrapper extends EventWrapper {
 			{
 				this.exp = 0;
 			} else {
-				int fortuneLevel = player.getMainHandItem().getEnchantmentLevel(Enchantments.BLOCK_FORTUNE);
-				int silkTouchLevel = player.getMainHandItem().getEnchantmentLevel(Enchantments.SILK_TOUCH);
-				this.exp = state.getExpDrop(level, level.random, pos, fortuneLevel, silkTouchLevel);
+				ItemStack stack = player.getMainHandItem();
+				int fortuneLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, stack);
+				int silkTouchLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, stack);
+				//this.exp = state.getBlock().getExpDrop(level, level.random, pos, fortuneLevel, silkTouchLevel);
 			}
 		}
 
@@ -141,10 +143,12 @@ public class BlockEventWrapper extends EventWrapper {
 			this.blockSnapshot = blockSnapshot;
 			this.placedBlock = !(entity instanceof Player) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock();
 			this.placedAgainst = placedAgainst;
-
+			/*
 			if (DEBUG) {
 				System.out.printf("Created EntityPlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][Entity: %s ]\n", getPlacedBlock(), placedAgainst, entity);
 			}
+			
+			*/
 		}
 
 		@Nullable
@@ -180,9 +184,12 @@ public class BlockEventWrapper extends EventWrapper {
 		public EntityMultiPlaceEvent(@NotNull List<BlockSnapshot> blockSnapshots, @NotNull BlockState placedAgainst, @Nullable Entity entity) {
 			super(blockSnapshots.get(0), placedAgainst, entity);
 			this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
+			/*
 			if (DEBUG) {
 				System.out.printf("Created EntityMultiPlaceEvent - [PlacedAgainst: %s ][Entity: %s ]\n", placedAgainst, entity);
 			}
+			
+			*/
 		}
 
 		/**

@@ -1,8 +1,10 @@
 package io.github.lounode.eventwrapper.forge.event.converter.server;
 
+import net.minecraftforge.event.server.ServerLifecycleEvent;
+
+
 import io.github.lounode.eventwrapper.event.server.ServerLifecycleEventWrapper;
 import io.github.lounode.eventwrapper.forge.event.converter.ForgeEventConverter;
-import net.minecraftforge.event.server.ServerLifecycleEvent;
 
 public class ServerLifecycleEventConverter implements ForgeEventConverter<ServerLifecycleEvent, ServerLifecycleEventWrapper> {
 
