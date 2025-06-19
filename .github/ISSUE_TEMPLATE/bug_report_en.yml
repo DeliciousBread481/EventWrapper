@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report an issue with supported versions of Extrabotany
+description: Report an issue with supported versions of EventWrapper
 body:
   - type: dropdown
     id: mod-loader
@@ -17,18 +17,18 @@ body:
       label: Minecraft Version
       placeholder: eg. 1.20.1
     validations:
-      required: true0
+      required: true
   - type: input
-    id: mod-version..00
+    id: mod-version
     attributes:
-      label: Extrabotany version
-      placeholder: eg. 1.20
+      label: EventWrapper version
+      placeholder: eg. 1.3.0
     validations:
       required: true
   - type: input
-    id: modloader-version
+    id: mod-loader-version
     attributes:
-      label: Modloader version
+      label: Mod Loader version
       description: |
         List the version of the mod loader you are using.
         If on Fabric, post the versions of both Fabric Loader and Fabric API.
