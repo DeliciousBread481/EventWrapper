@@ -1,4 +1,4 @@
-package io.github.lounode.eventwrapper.event;
+package io.github.lounode.eventwrapper.utils;
 
 public enum LogicalSide {
 	CLIENT,

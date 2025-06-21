@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import io.github.lounode.eventwrapper.event.ServiceUtil;
-
 public interface IPlatformEventHelper {
 	String forgePackageNamePrefix = "net.minecraftforge";
 	IPlatformEventHelper INSTANCE = ServiceUtil.findService(IPlatformEventHelper.class, null);

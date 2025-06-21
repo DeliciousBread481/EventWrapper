@@ -27,8 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
-import io.github.lounode.eventwrapper.event.LogicalSide;
 import io.github.lounode.eventwrapper.eventbus.api.Cancelable;
+import io.github.lounode.eventwrapper.utils.LogicalSide;
 
 /**
  * PlayerInteractEvent is fired when a player interacts in some way.

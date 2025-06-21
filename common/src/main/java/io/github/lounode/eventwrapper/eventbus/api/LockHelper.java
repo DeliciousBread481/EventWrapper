@@ -1,4 +1,4 @@
-package io.github.lounode.eventwrapper.event;
+package io.github.lounode.eventwrapper.eventbus.api;
 
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;

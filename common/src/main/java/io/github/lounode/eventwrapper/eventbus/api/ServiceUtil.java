@@ -1,4 +1,4 @@
-package io.github.lounode.eventwrapper.event;
+package io.github.lounode.eventwrapper.eventbus.api;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +22,6 @@ public class ServiceUtil {
 			throw new IllegalStateException(msg);
 		} else {
 			var provider = providers.get(0);
-			//BotaniaAPI.LOGGER.debug("Instantiating {} for service {}", provider.type().getName(), clazz.getName());
 			return provider.get();
 		}
 	}

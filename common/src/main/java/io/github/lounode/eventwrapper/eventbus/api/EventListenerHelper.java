@@ -5,8 +5,6 @@ import java.util.IdentityHashMap;
 
 import static io.github.lounode.eventwrapper.eventbus.api.EventWrapper.HasResult;
 
-import io.github.lounode.eventwrapper.event.LockHelper;
-
 public class EventListenerHelper {
 
 	private static final LockHelper<Class<?>, Boolean> cancelable = new LockHelper<>(new IdentityHashMap<>());
