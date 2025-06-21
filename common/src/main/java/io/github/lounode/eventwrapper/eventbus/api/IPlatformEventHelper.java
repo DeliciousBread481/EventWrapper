@@ -48,7 +48,7 @@ public interface IPlatformEventHelper {
 
 			try {
 				Field toField = Arrays.stream(toFields).filter(field -> field.getName().equals(name)).findFirst().orElse(null);
-				if (!Modifier.isFinal(toField.getModifiers()) && toField.getType().equals(type)) {
+				if (toField != null && !Modifier.isFinal(toField.getModifiers()) && toField.getType().equals(type)) {
 					fromField.setAccessible(true);
 					toField.setAccessible(true);
 					Object value = fromField.get(from);
