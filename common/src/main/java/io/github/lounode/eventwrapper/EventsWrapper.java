@@ -20,6 +20,10 @@ public class EventsWrapper {
 		getInstance().helper.register(target);
 	}
 
+	public static void unregister(Object target) {
+		getInstance().helper.unregister(target);
+	}
+
 	public static <T extends EventWrapper> T post(T event) {
 		return getInstance().helper.post(event);
 	}
