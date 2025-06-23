@@ -4,10 +4,13 @@ import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -33,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 
 import io.github.lounode.eventwrapper.EventsWrapper;
+import io.github.lounode.eventwrapper.event.PlayLevelSoundEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.living.MobEffectEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.AnvilRepairEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.EntityItemPickupEventWrapper;
@@ -240,5 +244,17 @@ public class EventWrapperHooks {
 
 	public static void onMobEffectExpired(LivingEntity entity, MobEffectInstance mobEffectInstance) {
 		EventsWrapper.post(new MobEffectEventWrapper.Expired(entity, mobEffectInstance));
+	}
+
+	public static PlayLevelSoundEventWrapper.AtEntity onPlaySoundAtEntity(Entity entity, Holder<SoundEvent> name, SoundSource category, float volume, float pitch) {
+		var event = new PlayLevelSoundEventWrapper.AtEntity(entity, name, category, volume, pitch);
+		EventsWrapper.post(event);
+		return event;
+	}
+
+	public static PlayLevelSoundEventWrapper.AtPosition onPlaySoundAtPosition(Level level, double x, double y, double z, Holder<SoundEvent> name, SoundSource category, float volume, float pitch) {
+		var event = new PlayLevelSoundEventWrapper.AtPosition(level, new Vec3(x, y, z), name, category, volume, pitch);
+		EventsWrapper.post(event);
+		return event;
 	}
 }

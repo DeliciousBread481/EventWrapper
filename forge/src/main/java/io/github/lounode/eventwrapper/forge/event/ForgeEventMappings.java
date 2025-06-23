@@ -3,6 +3,7 @@ package io.github.lounode.eventwrapper.forge.event;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import net.minecraftforge.event.PlayLevelSoundEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.*;
@@ -13,6 +14,7 @@ import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.Nullable;
 
 
+import io.github.lounode.eventwrapper.event.PlayLevelSoundEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.EntityEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.living.*;
 import io.github.lounode.eventwrapper.event.entity.player.*;
@@ -21,6 +23,7 @@ import io.github.lounode.eventwrapper.event.server.*;
 import io.github.lounode.eventwrapper.eventbus.api.EventConverter;
 import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
 import io.github.lounode.eventwrapper.forge.event.converter.ForgeEventConverter;
+import io.github.lounode.eventwrapper.forge.event.converter.PlayLevelSoundEventConverter;
 import io.github.lounode.eventwrapper.forge.event.converter.entity.EntityEventConverter;
 import io.github.lounode.eventwrapper.forge.event.converter.entity.living.*;
 import io.github.lounode.eventwrapper.forge.event.converter.entity.player.*;
@@ -117,5 +120,9 @@ public class ForgeEventMappings {
 		makeLink(LivingEvent.LivingJumpEvent.class, LivingEventWrapper.LivingJumpEvent.class, new LivingEventConverter.LivingJumpConverter());
 		makeLink(LivingEvent.LivingTickEvent.class, LivingEventWrapper.LivingTickEvent.class, new LivingEventConverter.LivingTickConverter());
 		makeLink(LivingEvent.LivingVisibilityEvent.class, LivingEventWrapper.LivingVisibilityEvent.class, new LivingEventConverter.LivingVisibilityConverter());
+
+		//Other
+		makeLink(PlayLevelSoundEvent.AtEntity.class, PlayLevelSoundEventWrapper.AtEntity.class, new PlayLevelSoundEventConverter.AtEntity());
+		makeLink(PlayLevelSoundEvent.AtPosition.class, PlayLevelSoundEventWrapper.AtPosition.class, new PlayLevelSoundEventConverter.AtPosition());
 	}
 }

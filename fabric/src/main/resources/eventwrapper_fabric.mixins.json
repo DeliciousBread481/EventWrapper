@@ -46,6 +46,7 @@
     "eventposter.furnace.FurnaceBurnTimeEventPosterFabricAPI",
     "eventposter.furnace.FurnaceBurnTimeEventPosterFurnaceBlockEntity",
     "eventposter.furnace.FurnaceBurnTimeEventPosterFurnaceMenu",
+    "eventposter.play_level_sound_event.EventPosterServerLevel",
     "eventposter.server.ServerLifecycleEventPoster"
   ],
   "injectors": {
@@ -59,7 +60,9 @@
     "eventposter.entity.player.playerinteractevent.PlayerInteractEventLeftClickBlockClient",
     "eventposter.entity.player.playerinteractevent.PlayerInteractEventLeftClickEmptyEventPoster",
     "eventposter.entity.player.playerinteractevent.PlayerInteractEventRightClickBlockEventPosterClient",
-    "eventposter.entity.player.playerinteractevent.PlayerInteractEventUseItemClientEventPoster"
+    "eventposter.entity.player.playerinteractevent.PlayerInteractEventUseItemClientEventPoster",
+    "eventposter.play_level_sound_event.EventPosterClientLevel",
+    "eventposter.play_level_sound_event.EventPosterLocalPlayer"
   ],
   "refmap": "eventwrapper.refmap.json"
 }
