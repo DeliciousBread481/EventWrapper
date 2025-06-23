@@ -1,7 +1,5 @@
 package io.github.lounode.eventwrapper.event;
 
-import io.github.lounode.eventwrapper.eventbus.api.Cancelable;
-import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
@@ -9,10 +7,14 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+
+import io.github.lounode.eventwrapper.eventbus.api.Cancelable;
+import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
 
 /**
  * PlayLevelSoundEvent is fired when a sound is played on a {@link Level}.
