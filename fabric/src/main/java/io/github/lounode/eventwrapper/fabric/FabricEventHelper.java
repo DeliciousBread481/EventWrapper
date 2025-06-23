@@ -15,6 +15,11 @@ public class FabricEventHelper implements IPlatformEventHelper {
 	}
 
 	@Override
+	public void unregister(Object target) {
+		EventsWrapper.WRAPPER_EVENT_BUS.unregister(target);
+	}
+
+	@Override
 	public boolean isFabric() {
 		return true;
 	}

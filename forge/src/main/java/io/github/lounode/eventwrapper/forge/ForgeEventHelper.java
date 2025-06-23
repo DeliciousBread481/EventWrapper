@@ -244,6 +244,11 @@ public class ForgeEventHelper implements IPlatformEventHelper {
 		}
 	}
 
+	@Override
+	public void unregister(Object object) {
+		MinecraftForge.EVENT_BUS.unregister(object);
+	}
+
 	private static void checkSupertypes(Class<?> registeredType, Class<?> type) {
 		if (type == null || type == Object.class) {
 			return;

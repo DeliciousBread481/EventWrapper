@@ -14,6 +14,7 @@ public interface IPlatformEventHelper {
 	IPlatformEventHelper INSTANCE = ServiceUtil.findService(IPlatformEventHelper.class, null);
 
 	void register(Object target);
+	void unregister(Object object);
 
 	default boolean isForge() {
 		return false;
