@@ -8,6 +8,7 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.*;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -19,6 +20,7 @@ import io.github.lounode.eventwrapper.event.entity.EntityEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.living.*;
 import io.github.lounode.eventwrapper.event.entity.player.*;
 import io.github.lounode.eventwrapper.event.furnace.FurnaceFuelBurnTimeEventWrapper;
+import io.github.lounode.eventwrapper.event.level.LevelEventWrapper;
 import io.github.lounode.eventwrapper.event.server.*;
 import io.github.lounode.eventwrapper.eventbus.api.EventConverter;
 import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
@@ -28,6 +30,7 @@ import io.github.lounode.eventwrapper.forge.event.converter.entity.EntityEventCo
 import io.github.lounode.eventwrapper.forge.event.converter.entity.living.*;
 import io.github.lounode.eventwrapper.forge.event.converter.entity.player.*;
 import io.github.lounode.eventwrapper.forge.event.converter.furnace.FurnaceFuelBurnTimeEventConverter;
+import io.github.lounode.eventwrapper.forge.event.converter.level.LevelEventConverter;
 import io.github.lounode.eventwrapper.forge.event.converter.server.*;
 import io.github.lounode.eventwrapper.forge.event.entity.player.ItemCooldownFinishEvent;
 import io.github.lounode.eventwrapper.forge.event.entity.player.ItemCooldownStartEvent;
@@ -120,9 +123,15 @@ public class ForgeEventMappings {
 		makeLink(LivingEvent.LivingJumpEvent.class, LivingEventWrapper.LivingJumpEvent.class, new LivingEventConverter.LivingJumpConverter());
 		makeLink(LivingEvent.LivingTickEvent.class, LivingEventWrapper.LivingTickEvent.class, new LivingEventConverter.LivingTickConverter());
 		makeLink(LivingEvent.LivingVisibilityEvent.class, LivingEventWrapper.LivingVisibilityEvent.class, new LivingEventConverter.LivingVisibilityConverter());
+		makeLink(LivingDeathEvent.class, LivingDeathEventWrapper.class, new LivingDeathEventConverter());
 
 		//Other
 		makeLink(PlayLevelSoundEvent.AtEntity.class, PlayLevelSoundEventWrapper.AtEntity.class, new PlayLevelSoundEventConverter.AtEntity());
 		makeLink(PlayLevelSoundEvent.AtPosition.class, PlayLevelSoundEventWrapper.AtPosition.class, new PlayLevelSoundEventConverter.AtPosition());
+		makeLink(LevelEvent.Load.class, LevelEventWrapper.Load.class, new LevelEventConverter.Load());
+		makeLink(LevelEvent.Unload.class, LevelEventWrapper.Unload.class, new LevelEventConverter.Unload());
+		makeLink(LevelEvent.Save.class, LevelEventWrapper.Save.class, new LevelEventConverter.Save());
+		makeLink(LevelEvent.CreateSpawnPosition.class, LevelEventWrapper.CreateSpawnPosition.class, new LevelEventConverter.CreateSpawnPosition());
+		makeLink(LevelEvent.PotentialSpawns.class, LevelEventWrapper.PotentialSpawns.class, new LevelEventConverter.PotentialSpawns());
 	}
 }

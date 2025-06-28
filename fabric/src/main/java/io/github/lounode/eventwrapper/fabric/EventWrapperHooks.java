@@ -11,12 +11,15 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -24,8 +27,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.PlayerDataStorage;
+import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -37,12 +43,14 @@ import java.io.File;
 
 import io.github.lounode.eventwrapper.EventsWrapper;
 import io.github.lounode.eventwrapper.event.PlayLevelSoundEventWrapper;
+import io.github.lounode.eventwrapper.event.entity.living.LivingDeathEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.living.MobEffectEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.AnvilRepairEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.EntityItemPickupEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.PlayerEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.PlayerInteractEventWrapper;
 import io.github.lounode.eventwrapper.event.furnace.FurnaceFuelBurnTimeEventWrapper;
+import io.github.lounode.eventwrapper.event.level.LevelEventWrapper;
 import io.github.lounode.eventwrapper.event.server.*;
 import io.github.lounode.eventwrapper.eventbus.api.EventWrapper;
 
@@ -256,5 +264,36 @@ public class EventWrapperHooks {
 		var event = new PlayLevelSoundEventWrapper.AtPosition(level, new Vec3(x, y, z), name, category, volume, pitch);
 		EventsWrapper.post(event);
 		return event;
+	}
+
+	public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
+		var event = new LivingDeathEventWrapper(entity, src);
+		EventsWrapper.post(event);
+		return event.isCanceled();
+	}
+
+	public static void onLevelLoad(Level level) {
+		EventsWrapper.post(new LevelEventWrapper.Load(level));
+	}
+
+	public static void onLevelUnload(Level level) {
+		EventsWrapper.post(new LevelEventWrapper.Unload(level));
+	}
+
+	public static void onLevelSave(Level level) {
+		EventsWrapper.post(new LevelEventWrapper.Save(level));
+	}
+
+	public static boolean onCreateWorldSpawn(Level level, ServerLevelData settings) {
+		var event = new LevelEventWrapper.CreateSpawnPosition(level, settings);
+		return event.isCanceled();
+	}
+
+	public static WeightedRandomList<MobSpawnSettings.SpawnerData> getPotentialSpawns(LevelAccessor level, MobCategory category, BlockPos pos, WeightedRandomList<MobSpawnSettings.SpawnerData> oldList) {
+		var event = new LevelEventWrapper.PotentialSpawns(level, category, pos, oldList);
+		if (event.isCanceled()) {
+			return WeightedRandomList.create();
+		}
+		return WeightedRandomList.create(event.getSpawnerDataList());
 	}
 }
