@@ -20,6 +20,7 @@
     "eventposter.entity.living.living_death_event.EventPosterLivingEntity",
     "eventposter.entity.living.living_death_event.EventPosterPlayer",
     "eventposter.entity.living.living_death_event.EventPosterServerPlayer",
+    "eventposter.entity.living.shield_block_event.EventPosterLivingEntity",
     "eventposter.entity.player.AnvilRepairEventPoster",
     "eventposter.entity.player.AttackEntityEventPoster",
     "eventposter.entity.player.playerevent.PlayerEventBreakSpeedEventPoster",

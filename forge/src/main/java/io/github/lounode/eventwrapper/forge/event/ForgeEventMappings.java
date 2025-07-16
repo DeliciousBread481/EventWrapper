@@ -124,6 +124,7 @@ public class ForgeEventMappings {
 		makeLink(LivingEvent.LivingTickEvent.class, LivingEventWrapper.LivingTickEvent.class, new LivingEventConverter.LivingTickConverter());
 		makeLink(LivingEvent.LivingVisibilityEvent.class, LivingEventWrapper.LivingVisibilityEvent.class, new LivingEventConverter.LivingVisibilityConverter());
 		makeLink(LivingDeathEvent.class, LivingDeathEventWrapper.class, new LivingDeathEventConverter());
+		makeLink(ShieldBlockEvent.class, ShieldBlockEventWrapper.class, new ShieldBlockEventConverter());
 
 		//Other
 		makeLink(PlayLevelSoundEvent.AtEntity.class, PlayLevelSoundEventWrapper.AtEntity.class, new PlayLevelSoundEventConverter.AtEntity());

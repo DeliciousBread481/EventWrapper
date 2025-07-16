@@ -45,6 +45,7 @@ import io.github.lounode.eventwrapper.EventsWrapper;
 import io.github.lounode.eventwrapper.event.PlayLevelSoundEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.living.LivingDeathEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.living.MobEffectEventWrapper;
+import io.github.lounode.eventwrapper.event.entity.living.ShieldBlockEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.AnvilRepairEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.EntityItemPickupEventWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.PlayerEventWrapper;
@@ -295,5 +296,11 @@ public class EventWrapperHooks {
 			return WeightedRandomList.create();
 		}
 		return WeightedRandomList.create(event.getSpawnerDataList());
+	}
+
+	public static ShieldBlockEventWrapper onShieldBlock(LivingEntity blocker, DamageSource source, float blocked) {
+		ShieldBlockEventWrapper e = new ShieldBlockEventWrapper(blocker, source, blocked);
+		EventsWrapper.post(e);
+		return e;
 	}
 }
