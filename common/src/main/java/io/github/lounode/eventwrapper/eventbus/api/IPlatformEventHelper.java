@@ -1,5 +1,7 @@
 package io.github.lounode.eventwrapper.eventbus.api;
 
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
+
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -8,8 +10,12 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public interface IPlatformEventHelper {
+
+	Map<Class<?>, Field[]> NON_FINAL_FIELD_CACHE = new Reference2ReferenceOpenHashMap<>();
+
 	String forgePackageNamePrefix = "net.minecraftforge";
 	IPlatformEventHelper INSTANCE = ServiceUtil.findService(IPlatformEventHelper.class, null);
 
@@ -41,17 +47,12 @@ public interface IPlatformEventHelper {
 			String name = fromField.getName();
 			Class<?> type = fromField.getType();
 
-			if (!type.isPrimitive()) {
-				continue;
-			}
-
 			try {
-				Field toField = Arrays.stream(toFields).filter(field -> field.getName().equals(name)).findFirst().orElse(null);
-				if (toField != null && !Modifier.isFinal(toField.getModifiers()) && toField.getType().equals(type)) {
-					fromField.setAccessible(true);
-					toField.setAccessible(true);
-					Object value = fromField.get(from);
-					toField.set(to, value);
+				for (Field toField : toFields) {
+					if (toField.getType() == type && toField.getName().equals(name)) {
+						Object value = fromField.get(from);
+						toField.set(to, value);
+					}
 				}
 			} catch (IllegalAccessException ignored) {}
 		}
@@ -67,14 +68,19 @@ public interface IPlatformEventHelper {
 	}
 
 	static Field[] getFieldsWithoutFinal(Class<?> clazz) {
-		List<Field> fieldList = new ArrayList<>(16);
-		while (clazz != null) {
-			Field[] fields = clazz.getDeclaredFields();
-			fieldList.addAll(Arrays.stream(fields).filter(field -> !Modifier.isFinal(field.getModifiers())).toList());
-			clazz = clazz.getSuperclass();
-		}
-		Field[] f = new Field[fieldList.size()];
-		return fieldList.toArray(f);
+		return NON_FINAL_FIELD_CACHE.computeIfAbsent(clazz, c -> {
+			List<Field> fieldList = new ArrayList<>(16);
+			while (c != null) {
+				for (Field field : c.getDeclaredFields()) {
+					if (!Modifier.isFinal(field.getModifiers())) {
+						field.setAccessible(true);
+						fieldList.add(field);
+					}
+				}
+				c = c.getSuperclass();
+			}
+			return fieldList.toArray(new Field[0]);
+		});
 	}
 
 	<T extends EventWrapper> T post(T event);
