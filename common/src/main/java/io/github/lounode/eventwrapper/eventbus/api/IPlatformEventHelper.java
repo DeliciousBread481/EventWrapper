@@ -52,6 +52,7 @@ public interface IPlatformEventHelper {
 					if (toField.getType() == type && toField.getName().equals(name)) {
 						Object value = fromField.get(from);
 						toField.set(to, value);
+						break;
 					}
 				}
 			} catch (IllegalAccessException ignored) {}

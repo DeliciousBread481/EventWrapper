@@ -1,6 +1,5 @@
 package io.github.lounode.eventwrapper.mixin;
 
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemCooldowns;
@@ -12,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.lang.reflect.Field;
 
 import io.github.lounode.eventwrapper.EventsWrapper;
 import io.github.lounode.eventwrapper.event.entity.player.ItemCooldownFinishEventWrapper;
@@ -29,10 +27,10 @@ public class ItemCooldownEventPoster {
 	private void onCooldownRemove(Item item, CallbackInfo ci) {
 		ItemCooldowns self = (ItemCooldowns) (Object) this;
 		Player player;
-		if (!isServer(self)) {
-			player = ClientUtil.getClientPlayer();
+		if (self instanceof ServerItemCooldowns cooldowns) {
+			player = cooldowns.player;
 		} else {
-			player = getServerPlayerField(self);
+			player = ClientUtil.getClientPlayer();
 		}
 
 		ItemCooldownFinishEventWrapper event = new ItemCooldownFinishEventWrapper(player, item);
@@ -48,34 +46,14 @@ public class ItemCooldownEventPoster {
 	private int onCooldownStart(int ticks, Item item) {
 		ItemCooldowns self = (ItemCooldowns) (Object) this;
 		Player player;
-		if (!isServer(self)) {
-			player = ClientUtil.getClientPlayer();
+		if (self instanceof ServerItemCooldowns cooldowns) {
+			player = cooldowns.player;
 		} else {
-			player = getServerPlayerField(self);
+			player = ClientUtil.getClientPlayer();
 		}
 		ItemCooldownStartEventWrapper event = new ItemCooldownStartEventWrapper(player, item, ticks);
 		EventsWrapper.post(event);
 		return event.isCanceled() ? 0 : event.getTicks();
-	}
-
-	private boolean isServer(ItemCooldowns itemcooldowns) {
-		return itemcooldowns instanceof ServerItemCooldowns;
-	}
-
-	private ServerPlayer getServerPlayerField(ItemCooldowns itemcooldowns) {
-		ServerItemCooldowns cooldowns = (ServerItemCooldowns) itemcooldowns;
-
-		for (Field field : cooldowns.getClass().getDeclaredFields()) {
-			if (field.getType() == ServerPlayer.class) {
-				try {
-					field.setAccessible(true);
-					return (ServerPlayer) field.get(cooldowns);
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return null;
 	}
 
 }
