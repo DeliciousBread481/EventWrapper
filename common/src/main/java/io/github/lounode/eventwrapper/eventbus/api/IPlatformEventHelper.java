@@ -1,7 +1,5 @@
 package io.github.lounode.eventwrapper.eventbus.api;
 
-import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
-
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -11,10 +9,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public interface IPlatformEventHelper {
 
-	Map<Class<?>, Field[]> NON_FINAL_FIELD_CACHE = new Reference2ReferenceOpenHashMap<>();
+	Map<Class<?>, Field[]> NON_FINAL_FIELD_CACHE = new ConcurrentHashMap<>();
 
 	String forgePackageNamePrefix = "net.minecraftforge";
 	IPlatformEventHelper INSTANCE = ServiceUtil.findService(IPlatformEventHelper.class, null);
