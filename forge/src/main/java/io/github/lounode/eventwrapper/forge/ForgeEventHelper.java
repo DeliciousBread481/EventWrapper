@@ -15,8 +15,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.stream.Stream;
 
 import io.github.lounode.eventwrapper.eventbus.api.EventConverter;
@@ -28,7 +26,6 @@ import io.github.lounode.eventwrapper.forge.event.ForgeEventMappings;
 public class ForgeEventHelper implements IPlatformEventHelper {
 
 	private static final Logger LOGGER = LogManager.getLogger();
-	private static final Map<Event, EventWrapper> FORGE_EVENT_TRACKER_MAP = new WeakHashMap<>();
 
 	@Override
 	public boolean isForge() {
@@ -57,7 +54,6 @@ public class ForgeEventHelper implements IPlatformEventHelper {
 		extension.EventWrapper_setEventWrapper(event);
 		
 		*/
-		track(forgeEvent, event);
 
 		MinecraftForge.EVENT_BUS.post(forgeEvent);
 
@@ -134,6 +130,7 @@ public class ForgeEventHelper implements IPlatformEventHelper {
 		EventPriority priority = annotation != null ? EventPriority.valueOf(annotation.priority().name()) : EventPriority.NORMAL;
 		boolean receiveCanceled = annotation != null && annotation.receiveCanceled();
 
+		method.setAccessible(true);
 		MinecraftForge.EVENT_BUS.addListener(priority, receiveCanceled, forgeEventClass, event -> {
 			try {
 				EventWrapper wrapper;
@@ -154,12 +151,7 @@ public class ForgeEventHelper implements IPlatformEventHelper {
 				}
 				
 				*/
-				if (FORGE_EVENT_TRACKER_MAP.containsKey(event)) {
-					wrapper = FORGE_EVENT_TRACKER_MAP.get(event);
-					IPlatformEventHelper.syncEventData(event, wrapper);
-				}
 
-				method.setAccessible(true);
 				method.invoke(target, wrapper);
 
 				IPlatformEventHelper.syncEventData(wrapper, event);
@@ -269,14 +261,6 @@ public class ForgeEventHelper implements IPlatformEventHelper {
 		checkSupertypes(registeredType, type.getSuperclass());
 		Stream.of(type.getInterfaces())
 				.forEach(itf -> checkSupertypes(registeredType, itf));
-	}
-
-	public static void track(Event forgeEvent, EventWrapper wrapper) {
-		FORGE_EVENT_TRACKER_MAP.put(forgeEvent, wrapper);
-	}
-
-	public static EventWrapper getWrapper(Event forgeEvent) {
-		return FORGE_EVENT_TRACKER_MAP.get(forgeEvent);
 	}
 
 	@Override
