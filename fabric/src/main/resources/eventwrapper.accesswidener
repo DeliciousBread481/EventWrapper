@@ -11,3 +11,4 @@ extendable class net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator
 accessible class net/minecraft/client/resources/model/ModelManager$ReloadState
 accessible class net/minecraft/server/network/ServerGamePacketListenerImpl$EntityInteraction
 accessible field net/minecraft/world/level/storage/PlayerDataStorage playerDir Ljava/io/File;
+accessible field net/minecraft/world/item/ServerItemCooldowns player Lnet/minecraft/server/level/ServerPlayer;
