@@ -17,7 +17,7 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew ./scripts/upload_releases.sh
       - name: Validate gradlew integrity
-        uses: gradle/wrapper-validation-action@v2
+        uses: gradle/actions/wrapper-validation@v3
       - name: Cache
         uses: actions/cache@v4
         with:
