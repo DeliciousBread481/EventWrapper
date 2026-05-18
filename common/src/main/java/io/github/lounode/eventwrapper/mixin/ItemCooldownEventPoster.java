@@ -16,7 +16,7 @@ import io.github.lounode.eventwrapper.event.entity.player.ItemCooldownFinishEven
 import io.github.lounode.eventwrapper.event.entity.player.ItemCooldownStartEventWrapper;
 import io.github.lounode.eventwrapper.utils.ClientUtil;
 
-@Mixin(ItemCooldowns.class)
+@Mixin(ServerItemCooldowns.class)
 public class ItemCooldownEventPoster {
 
 	@Inject(
