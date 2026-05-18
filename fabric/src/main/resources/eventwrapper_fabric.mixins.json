@@ -73,7 +73,8 @@
     "eventposter.level.level_event.load.EventPosterClientLevel",
     "eventposter.level.level_event.unload.EventPosterMinecraft",
     "eventposter.play_level_sound_event.EventPosterClientLevel",
-    "eventposter.play_level_sound_event.EventPosterLocalPlayer"
+    "eventposter.play_level_sound_event.EventPosterLocalPlayer",
+    "ItemCooldownEventPosterClient"
   ],
   "refmap": "eventwrapper.refmap.json"
 }
