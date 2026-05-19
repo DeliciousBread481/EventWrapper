@@ -4,6 +4,8 @@
   "package": "io.github.lounode.eventwrapper.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+  ],
+  "server": [
     "ItemCooldownEventPoster"
   ],
   "client": [
